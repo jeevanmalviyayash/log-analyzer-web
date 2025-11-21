@@ -16,7 +16,7 @@ function LogAnalyzer() {
   useEffect(() => {
     const loadLogs = async () => {
       const data = await fetchLogs(search, level, startDate, endDate);
-      setLogs(Array.isArray(data) ? data : []);
+      setLogs(Array.isArray(data) ? data : []); //saves returned logs
     };
     loadLogs();
   }, [search, level, startDate, endDate]);
