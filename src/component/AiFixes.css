@@ -6,7 +6,7 @@
   font-family: Arial, sans-serif;
   position: relative;
 
-  /* ✅ subtle off-white background for entire page  background-color: lab(97.98% 0.36 -0.97);*/
+  
  
    background-color: #fcfcfc; 
 }
@@ -14,10 +14,10 @@
 .chat-area {
   flex: 1;
   padding: 1rem;
-  padding-bottom: 6rem; /* leave space for input bar */
+  padding-bottom: 6rem; 
 }
 
-/* Chat bubbles */
+
 .message {
   max-width: 75%;
   padding: 0.75rem;
@@ -27,18 +27,18 @@
 }
 
 .message.user {
-  background: #e8f0fe;   /* light blue for user */
-  margin-right: auto;    /* bubble sits on left side */
-  text-align: left;      /* ✅ text inside bubble is left aligned */
+  background: #e8f0fe;   
+  margin-right: auto;    
+  text-align: left;      
   white-space: normal;
   overflow-wrap: anywhere;
 }
 
 .message.assistant {
-  background: #d1e7dd;   /* light green for assistant */
-  margin-left: auto;     /* bubble sits on right side */
-  text-align: left;      /* keep assistant text left aligned too */
-  white-space: pre-wrap; /* preserve line breaks */
+  background: #d1e7dd;   
+  margin-left: auto;    
+  text-align: left;     
+  white-space: pre-wrap; 
   overflow-wrap: anywhere;
 }
 
@@ -48,7 +48,7 @@
   margin-top: 0.5rem;
 }
 
-/* Input bar fixed at bottom */
+
 .chat-input {
   display: flex;
   align-items: center;

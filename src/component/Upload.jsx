@@ -1,3 +1,4 @@
+
 import React from "react";
 import "./Upload.css";
 import { useNavigate } from "react-router-dom";  
@@ -23,6 +24,7 @@ const Upload = () => {
     </div>
    
   );
+
 };
 
 export default Upload;
