@@ -1,0 +1,21 @@
+.ai-btn {
+  position: absolute;
+  top: 1rem;          /* distance from top */
+  right: 1rem;        /* distance from right */
+  background: linear-gradient(135deg, #4a90e2, #9013fe);
+  color: #fff;
+  border: none;
+  border-radius: 2rem; /* pill shape */
+  padding: 0.6rem 1.4rem;
+  font-size: 1rem;
+  font-weight: 600;
+  cursor: pointer;
+  box-shadow: 0 4px 10px rgba(0,0,0,0.15);
+  transition: all 0.3s ease;
+}
+
+.ai-btn:hover {
+  background: linear-gradient(135deg, #5aa9f0, #a44bff);
+  transform: translateY(-2px);
+  box-shadow: 0 6px 14px rgba(0,0,0,0.2);
+}
