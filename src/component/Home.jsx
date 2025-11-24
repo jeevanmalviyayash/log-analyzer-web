@@ -1,92 +1,43 @@
 import { useNavigate } from "react-router-dom";
-
+ 
 function Home() {
   const navigate = useNavigate();
-
-  const styles = {
-    container: {
-      fontFamily: "Arial, sans-serif",
-      textAlign: "center",
-    },
-    navbar: {
-      display: "flex",
-      justifyContent: "space-between",
-      alignItems: "center",
-      backgroundColor: "#2c3e50",
-      padding: "10px 20px",
-    },
-    logo: {
-      color: "#fff",
-      fontSize: "20px",
-      fontWeight: "bold",
-    },
-    navLinks: {
-      listStyle: "none",
-      display: "flex",
-      gap: "20px",
-      margin: 0,
-      padding: 0,
-    },
-    navItem: {
-      color: "#fff",
-      cursor: "pointer",
-      fontWeight: "bold",
-      transition: "color 0.3s",
-    },
-    navItemHover: {
-      color: "#f39c12",
-    },
-    content: {
-      marginTop: "50px",
-    },
-    heading: {
-      fontSize: "28px",
-      color: "#34495e",
-    },
-    paragraph: {
-      fontSize: "18px",
-      color: "#7f8c8d",
-    },
-  };
-
+ 
   return (
-    <div style={styles.container}>
-      <nav style={styles.navbar}>
-        <h2 style={styles.logo}>Log Analyzer App</h2>
-        <ul style={styles.navLinks}>
+    <div className="font-sans text-center">
+      {/* NAVBAR */}
+      <nav className="flex justify-between items-center bg-gray-800 px-6 py-4 shadow">
+        <h2 className="text-white text-xl font-bold">Log Analyzer App</h2>
+ 
+        <ul className="flex gap-6 text-white font-semibold">
           <li
-            style={styles.navItem}
-            onMouseOver={(e) => (e.target.style.color = styles.navItemHover.color)}
-            onMouseOut={(e) => (e.target.style.color = styles.navItem.color)}
+            className="cursor-pointer hover:text-yellow-400"
             onClick={() => navigate("/")}
           >
             Home
           </li>
           <li
-            style={styles.navItem}
-            onMouseOver={(e) => (e.target.style.color = styles.navItemHover.color)}
-            onMouseOut={(e) => (e.target.style.color = styles.navItem.color)}
+            className="cursor-pointer hover:text-yellow-400"
             onClick={() => navigate("/upload")}
           >
             Upload
           </li>
           <li
-            style={styles.navItem}
-            onMouseOver={(e) => (e.target.style.color = styles.navItemHover.color)}
-            onMouseOut={(e) => (e.target.style.color = styles.navItem.color)}
+            className="cursor-pointer hover:text-yellow-400"
             onClick={() => navigate("/log-analyzer")}
           >
             Log Analyzer
           </li>
         </ul>
       </nav>
-
-      <div style={styles.content}>
-        <h1 style={styles.heading}>Welcome to Log Analyzer</h1>
-        
+ 
+      {/* MAIN CONTENT */}
+      <div className="mt-16">
+        <h1 className="text-3xl font-bold text-gray-700">Welcome to Log Analyzer</h1>
       </div>
     </div>
   );
 }
-
+ 
 export default Home;
+ 
