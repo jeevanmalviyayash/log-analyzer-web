@@ -1,6 +1,6 @@
 import React, { useRef, useState } from "react";
 import axios from "axios";
-import { uploadLogFile } from "../service/uploadService";
+// import { uploadLogFile } from "../service/uploadService";
 
 const MAX_SIZE = 50 * 1024 * 1024; // 50MB limit, change as required
 
