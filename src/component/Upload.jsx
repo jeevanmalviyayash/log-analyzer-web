@@ -1,9 +1,9 @@
 import React, { useRef, useState } from "react";
 import axios from "axios";
-import { uploadLogFile } from "../service/uploadService";
-
+// import { uploadLogFile } from "../service/uploadService";
+ 
 const MAX_SIZE = 50 * 1024 * 1024; // 50MB limit, change as required
-
+ 
 const Upload = () => {
   const fileInputRef = useRef();
   const [selectedFile, setSelectedFile] = useState(null);
@@ -11,22 +11,22 @@ const Upload = () => {
   const [progress, setProgress] = useState(0);
   const [error, setError] = useState("");
   const [success, setSuccess] = useState("");
-
+ 
     const [loading, setLoading] = useState(false);
-
+ 
   const resetState = () => {
     setSelectedFile(null);
     setProgress(0);
     setError("");
     setSuccess("");
   };
-
+ 
   const isValidFile = (file) => {
     const validTypes = ["text/plain", "application/octet-stream", ""]; // .log may show as octet-stream or blank
     const validExt = file.name.endsWith(".log") || file.name.endsWith(".txt");
     return validTypes.includes(file.type) && validExt && file.size <= MAX_SIZE;
   };
-
+ 
   const handleFileChange = (e) => {
     resetState();
     const file = e.target.files[0];
@@ -38,7 +38,7 @@ const Upload = () => {
       setSelectedFile(file);
     }
   };
-
+ 
   // this will work whne and drag file over the drop area
   const handleDrag = (e) => {
     e.preventDefault();
@@ -46,9 +46,9 @@ const Upload = () => {
     if (e.type === "dragenter" || e.type === "dragover") setDragActive(true);
     else setDragActive(false);
   };
-
+ 
   const handleDrop = (e) => {
-    e.preventDefault();//Prevents the default action that the browser would take for that event.
+    e.preventDefault();//Prevents the default action that the browser would take for that event.
     e.stopPropagation();//Stops the event from bubbling (or propagating) up the DOM tree to parent elements.
     resetState();
     setDragActive(false);
@@ -61,22 +61,22 @@ const Upload = () => {
       setSelectedFile(file);
     }
   };
-
-  //It programmatically triggers a click on the <input type="file" /> 
+ 
+  //It programmatically triggers a click on the <input type="file" />
   // element, which you have referenced using useRef (i.e., fileInputRef).
   //This opens the file picker dialog for the user to select a file.
   const handleBrowseClick = () => fileInputRef.current.click();
-
+ 
   const handleUpload = async () => {
     if (!selectedFile) return;
     setError("");
     setSuccess("");
     setProgress(0);
     setLoading(true); // start loader
-
+ 
     const formData = new FormData();
     formData.append("file", selectedFile);
-
+ 
     try {
        await uploadLogFile(selectedFile, (event) => {
         setProgress(Math.round((event.loaded * 100) / event.total));
@@ -93,7 +93,7 @@ const Upload = () => {
     setLoading(false); // stop loader
   }
   };
-
+ 
   return (
   <div className="flex flex-col items-center mt-12">
     <h1 className="text-3xl font-bold text-blue-600">
@@ -125,7 +125,7 @@ const Upload = () => {
           </svg>
         </div>
       )}
-
+ 
       <form
         className={`flex flex-col items-center border-2 border-dashed rounded-lg w-full py-10 mb-6 transition-colors duration-200 ${
           dragActive ? "border-blue-600 bg-blue-50" : "border-gray-300 bg-white"
@@ -168,11 +168,11 @@ const Upload = () => {
           <span className="mt-3 text-xs text-gray-700">{selectedFile.name}</span>
         )}
       </form>
-
+ 
       {/* Error and Success Messaging */}
       {error && <div className="text-red-600 mb-2">{error}</div>}
       {success && <div className="text-green-600 mb-2">{success}</div>}
-
+ 
       {/* Progress Bar */}
       {progress > 0 && loading && (
         <div className="w-full bg-gray-200 rounded-full h-2.5 mb-4">
@@ -182,7 +182,7 @@ const Upload = () => {
           ></div>
         </div>
       )}
-
+ 
       <button
         className={
           `mt-2 w-full py-2 bg-gray-100 rounded font-semibold text-black border border-gray-300 hover:bg-gray-200 `
@@ -197,7 +197,7 @@ const Upload = () => {
   </div>
 );
 };
-
+ 
 //   return (
 //     <div className="flex flex-col items-center mt-12">
 //     <h1 className="text-3xl font-bold text-blue-600">
@@ -269,10 +269,10 @@ const Upload = () => {
 //             <span className="mt-3 text-xs text-gray-700">{selectedFile.name}</span>
 //           )}
 //         </form>
-
+ 
 //         {error && <div className="text-red-600 mb-2">{error}</div>}
 //         {success && <div className="text-green-600 mb-2">{success}</div>}
-
+ 
 //         {progress > 0 && (
 //           <div className="w-full bg-gray-200 rounded-full h-2.5 mb-4">
 //             <div
@@ -281,7 +281,7 @@ const Upload = () => {
 //             ></div>
 //           </div>
 //         )}
-
+ 
 //         <button
 //           className={`mt-2 w-full py-2 bg-gray-100 rounded font-semibold text-black border border-gray-300 hover:bg-gray-200 ${!selectedFile ? "opacity-50 cursor-not-allowed" : ""}`}
 //           onClick={handleUpload}
@@ -293,5 +293,6 @@ const Upload = () => {
 //     </div>
 //   );
 // };
-
+ 
 export default Upload;
+ 
