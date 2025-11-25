@@ -1,50 +1,74 @@
-import React from "react";
-
+ import React from "react";
+ 
 const LogTable = ({ logs }) => {
   return (
-    <table className="w-full border border-gray-300 rounded-md overflow-hidden">
-      <thead className="bg-gray-200">
-        <tr>
-          <th className="p-2 border">ID</th>
-          <th className="p-2 border">Title</th>
-          <th className="p-2 border">Description</th>
-          <th className="p-2 border">Level</th>
-          <th className="p-2 border">User</th>
-          <th className="p-2 border">Timestamp</th>
-          <th className="p-2 border">Created</th>
-        </tr>
-      </thead>
-
-      <tbody>
-        {Array.isArray(logs) && logs.length > 0 ? (
-          logs.map((log, index) => (
-            <tr
-              key={log.id}
-              className={index % 2 === 0 ? "bg-white" : "bg-gray-50"}
-            >
-              <td className="p-2 border">{log.id}</td>
-              <td className="p-2 border">{log.title}</td>
-              <td className="p-2 border">{log.description}</td>
-              <td className="p-2 border">{log.level}</td>
-              <td className="p-2 border">{log.username}</td>
-              <td className="p-2 border">
-                {log.timestamp?.replace("T", " ").slice(0, 19)}
-              </td>
-              <td className="p-2 border">
-                {log.createdDate?.replace("T", " ").slice(0, 19)}
+    <div className="overflow-hidden rounded-lg shadow-lg border border-gray-200 mt-4">
+      <table className="w-full text-sm text-gray-800">
+        <thead className="bg-slate-800 text-white text-sm font-semibold">
+          <tr>
+            <th className="px-4 py-3 text-left">ID</th>
+            <th className="px-4 py-3 text-left">Title</th>
+            <th className="px-4 py-3 text-left">Description</th>
+            <th className="px-4 py-3 text-left">Level</th>
+            <th className="px-4 py-3 text-left">User</th>
+            <th className="px-4 py-3 text-left">Timestamp</th>
+            <th className="px-4 py-3 text-left">Created</th>
+          </tr>
+        </thead>
+ 
+        <tbody>
+          {Array.isArray(logs) && logs.length > 0 ? (
+            logs.map((log, index) => (
+              <tr
+                key={log.errorId}
+                className={`border-b transition ${
+                  index % 2 === 0 ? "bg-white" : "bg-gray-50"
+                } hover:bg-blue-50`}
+              >
+                <td className="px-4 py-3">{log.errorId}</td>
+                <td className="px-4 py-3">{log.title}</td>
+                <td className="px-4 py-3">{log.errorMessage}</td>
+ 
+                {/* Level color badge */}
+                <td className="px-4 py-3">
+                  <span
+                    className={`px-2 py-1 rounded-md text-xs font-semibold
+                    ${
+                      log.errorLevel === "ERROR"
+                        ? "bg-red-100 text-red-700"
+                        : log.errorLevel === "WARN"
+                        ? "bg-yellow-100 text-yellow-700"
+                        : "bg-green-100 text-green-700"
+                    }`}
+                  >
+                    {log.errorLevel}
+                  </span>
+                </td>
+ 
+                <td className="px-4 py-3">{log.username}</td>
+                <td className="px-4 py-3">
+                  {log.timeStamp?.replace("T", " ").slice(0, 19)}
+                </td>
+                <td className="px-4 py-3">
+                  {log.createdDate?.replace("T", " ").slice(0, 19)}
+                </td>
+              </tr>
+            ))
+          ) : (
+            <tr>
+              <td
+                colSpan="7"
+                className="px-4 py-6 text-center text-gray-500 font-medium"
+              >
+                No logs available
               </td>
             </tr>
-          ))
-        ) : (
-          <tr>
-            <td colSpan="7" className="p-4 text-center text-gray-500">
-              No logs available
-            </td>
-          </tr>
-        )}
-      </tbody>
-    </table>
+          )}
+        </tbody>
+      </table>
+    </div>
   );
 };
-
+ 
 export default LogTable;
+ 

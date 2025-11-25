@@ -1,8 +1,9 @@
-import React,{useState,useEffect} from "react";
+import React, { useState, useEffect } from "react";
 import SearchBar from "./SearchBar";
 import Filters from "./Filters";
 import LogTable from "./LogTable";
 import { fetchLogs } from "../api/logApi";
+ 
 function LogAnalyzer() {
   const [search, setSearch] = useState("");
   const [level, setLevel] = useState("");
@@ -19,11 +20,12 @@ function LogAnalyzer() {
   }, [search, level, startDate, endDate]);
  
   return (
-    <div className="w-[90%] mx-auto p-5 font-sans">
-      <h2 className="text-2xl font-bold mb-4">Log Analyzer - Search & Filter</h2>
+    <div className="w-[92%] mx-auto p-6 font-sans bg-white rounded-xl shadow-sm min-h-[85vh] flex flex-col">
+      <h2 className="text-3xl font-bold mb-6 tracking-wide text-slate-800">
+        📊 Log Analyzer — Search & Filter
+      </h2>
  
       <SearchBar search={search} setSearch={setSearch} />
- 
       <Filters
         level={level}
         setLevel={setLevel}
@@ -33,10 +35,14 @@ function LogAnalyzer() {
         setEndDate={setEndDate}
       />
  
-      <LogTable logs={logs} />
+      {/* table section stays tall even if no data */}
+      <div className="flex-grow">
+        <LogTable logs={logs} />
+      </div>
  
-      <div className="mt-5 p-4 bg-gray-100 rounded-md shadow">
-        <p><strong>Search:</strong> {search}</p>
+      {/* search summary box stays in last position */}
+      <div className="mt-6 p-4 bg-gray-50 rounded-lg shadow-inner text-sm leading-6">
+        <p><strong>Search:</strong> {search || "None"}</p>
         <p><strong>Level Filter:</strong> {level || "All Levels"}</p>
         <p><strong>Start Date:</strong> {startDate || "Not selected"}</p>
         <p><strong>End Date:</strong> {endDate || "Not selected"}</p>
