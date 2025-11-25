@@ -5,6 +5,7 @@ import Login from "./component/Login";
 import Register from "./component/Registration";
 import Home from "./component/Home";
 import LogAnalyzer from "./component/LogAnalyzer"; // ✅ Your moved code goes here
+import ForgotPassword from "./component/ForgotPassword";
 
 function App() {
   return (
@@ -17,6 +18,7 @@ function App() {
         <Route path="/log-analyzer" element={<LogAnalyzer />} />
         <Route path="/login" element={<Login/>} />
         <Route path="/register" element={<Register />} />
+        <Route path="/forgotPassword" element={<ForgotPassword />} />
       </Routes>
     </Router>
   );
