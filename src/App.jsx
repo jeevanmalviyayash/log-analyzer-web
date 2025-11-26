@@ -1,5 +1,5 @@
 import "./App.css";
-import { BrowserRouter as Router, Routes, Route } from "react-router-dom";
+import { BrowserRouter as Router, Routes, Route, Navigate } from "react-router-dom";
 import Upload from "./component/Upload";
 import Login from "./component/Login";
 import Register from "./component/Registration";
@@ -11,8 +11,9 @@ function App() {
   return (
     <Router>
       <Routes>
-        <Route path="/" element={<Home />} />
        
+        <Route path="/" element={<Navigate to="/register" />} />
+
         <Route path="/upload" element={<Upload />} />
 
         <Route path="/log-analyzer" element={<LogAnalyzer />} />
