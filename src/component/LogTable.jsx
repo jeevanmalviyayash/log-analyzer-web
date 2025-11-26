@@ -7,10 +7,10 @@ const LogTable = ({ logs }) => {
         <thead className="bg-slate-800 text-white text-sm font-semibold">
           <tr>
             <th className="px-4 py-3 text-left">ID</th>
-            <th className="px-4 py-3 text-left">Title</th>
+            <th className="px-4 py-3 text-left">Error Type</th>
             <th className="px-4 py-3 text-left">Description</th>
-            <th className="px-4 py-3 text-left">Level</th>
-            <th className="px-4 py-3 text-left">User</th>
+            {/* <th className="px-4 py-3 text-left">Level</th> */}
+            <th className="px-4 py-3 text-left">Source</th>
             <th className="px-4 py-3 text-left">Timestamp</th>
             <th className="px-4 py-3 text-left">Created</th>
           </tr>
@@ -26,10 +26,10 @@ const LogTable = ({ logs }) => {
                 } hover:bg-blue-50`}
               >
                 <td className="px-4 py-3">{log.errorId}</td>
-                <td className="px-4 py-3">{log.title}</td>
+                <td className="px-4 py-3">{log.errorType || "-"}</td>
                 <td className="px-4 py-3">{log.errorMessage}</td>
  
-                {/* Level color badge */}
+                {/* Level color badge
                 <td className="px-4 py-3">
                   <span
                     className={`px-2 py-1 rounded-md text-xs font-semibold
@@ -43,14 +43,14 @@ const LogTable = ({ logs }) => {
                   >
                     {log.errorLevel}
                   </span>
-                </td>
+                </td> */}
  
-                <td className="px-4 py-3">{log.username}</td>
+                <td className="px-4 py-3">{log.source}</td>
                 <td className="px-4 py-3">
                   {log.timeStamp?.replace("T", " ").slice(0, 19)}
                 </td>
                 <td className="px-4 py-3">
-                  {log.createdDate?.replace("T", " ").slice(0, 19)}
+                  {log.createdAt?.replace("T", " ").slice(0, 19)}
                 </td>
               </tr>
             ))
