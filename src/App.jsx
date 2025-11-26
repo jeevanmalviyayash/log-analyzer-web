@@ -3,11 +3,8 @@ import { BrowserRouter, Router, Routes, Route } from "react-router-dom";
 import Upload from "./component/Upload";
 import Login from "./component/Login";
 import Register from "./component/Registration";
-import Home from "./component/Home";
-import LogAnalyzer from "./component/LogAnalyzer"; // ✅ Your moved code goes here
 import ForgotPassword from "./component/ForgotPassword";
 import AIFixes from "./component/AiFixes";
-import Home from "./component/Home";
 import LogAnalyzer from "./component/LogAnalyzer"; // ✅ Your moved code goes here
 import Dashboard from "./pages/Dashboard";
 import Logs from "./pages/Logs"
@@ -37,6 +34,7 @@ function App() {
           </Routes>
         </Content>
       </Layout>
+    </BrowserRouter>
   );
 }
 
