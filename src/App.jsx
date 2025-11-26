@@ -1,12 +1,14 @@
 import "./App.css";
 import { BrowserRouter, Router, Routes, Route } from "react-router-dom";
 import Upload from "./component/Upload";
+import AIFixes from "./component/AiFixes";
 import Home from "./component/Home";
 import LogAnalyzer from "./component/LogAnalyzer"; // ✅ Your moved code goes here
 import Dashboard from "./pages/Dashboard";
 import Logs from "./pages/Logs"
 import Navbar from "./component/Navbar";
 import { Layout } from "antd";
+
 
 const { Content } = Layout;
 function App() {
@@ -19,7 +21,7 @@ function App() {
             {/* <Route path="/" element={<Home />} /> */}
 
             <Route path="/upload" element={<Upload />} />
-
+            <Route path="/ai-assistant" element={<AIFixes />} />
             <Route path="/log-analyzer" element={<LogAnalyzer />} />
             <Route path="/" element={<Dashboard />} />
             <Route path="/logs" element={<Logs />} />
@@ -27,6 +29,7 @@ function App() {
         </Content>
       </Layout>
     </BrowserRouter>
+
   );
 }
 
