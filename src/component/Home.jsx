@@ -1,7 +1,11 @@
 import { useNavigate } from "react-router-dom";
+import "../css/home.css";  
 
 function Home() {
   const navigate = useNavigate();
+   const clickAiFix = () => {
+    navigate("/ai-assistant");   
+  };
 
   const styles = {
     container: {
@@ -50,6 +54,7 @@ function Home() {
   };
 
   return (
+
     <div style={styles.container}>
       <nav style={styles.navbar}>
         <h2 style={styles.logo}>Log Analyzer App</h2>
@@ -85,6 +90,9 @@ function Home() {
         <h1 style={styles.heading}>Welcome to Log Analyzer</h1>
         
       </div>
+         <button className="ai-btn" onClick={clickAiFix}>
+          AI Assistant
+        </button>
     </div>
   );
 }
