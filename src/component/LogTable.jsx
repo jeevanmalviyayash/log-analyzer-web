@@ -8,11 +8,11 @@ const LogTable = ({ logs }) => {
           <tr>
             <th className="px-4 py-3 text-left">ID</th>
             <th className="px-4 py-3 text-left">Error Type</th>
-            <th className="px-4 py-3 text-left">Description</th>
+            <th className="px-4 py-3 text-left">Message</th>
             {/* <th className="px-4 py-3 text-left">Level</th> */}
             <th className="px-4 py-3 text-left">Source</th>
             <th className="px-4 py-3 text-left">Timestamp</th>
-            <th className="px-4 py-3 text-left">Created</th>
+            <th className="px-4 py-3 text-left">CreatedAt</th>
           </tr>
         </thead>
  

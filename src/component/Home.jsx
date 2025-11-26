@@ -1,18 +1,5 @@
 import { useNavigate } from "react-router-dom";
-<<<<<<< HEAD
  
-function Home() {
-  const navigate = useNavigate();
- 
-  return (
-    <div className="font-sans text-center">
-      {/* NAVBAR */}
-      <nav className="flex justify-between items-center bg-gray-800 px-6 py-4 shadow">
-        <h2 className="text-white text-xl font-bold">Log Analyzer App</h2>
- 
-        <ul className="flex gap-6 text-white font-semibold">
-=======
-import "../css/home.css";  
 
 function Home() {
   const navigate = useNavigate();
@@ -72,7 +59,6 @@ function Home() {
       <nav style={styles.navbar}>
         <h2 style={styles.logo}>Log Analyzer App</h2>
         <ul style={styles.navLinks}>
->>>>>>> 44627d00374881ad3cd4bef9ba94db433fd9b1f5
           <li
             className="cursor-pointer hover:text-yellow-400"
             onClick={() => navigate("/")}
