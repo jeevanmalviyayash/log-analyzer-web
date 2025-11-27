@@ -6,18 +6,18 @@ import { fetchLogs } from "../api/logApi";
  
 function LogAnalyzer() {
   const [search, setSearch] = useState("");
-  const [level, setLevel] = useState("");
+  // const [level, setLevel] = useState("");
   const [startDate, setStartDate] = useState("");
   const [endDate, setEndDate] = useState("");
   const [logs, setLogs] = useState([]);
  
   useEffect(() => {
     const loadLogs = async () => {
-      const data = await fetchLogs(search, level, startDate, endDate);
+      const data = await fetchLogs(search, startDate, endDate);
       setLogs(Array.isArray(data) ? data : []);
     };
     loadLogs();
-  }, [search, level, startDate, endDate]);
+  }, [search, startDate, endDate]);
  
   return (
     <div className="w-[92%] mx-auto p-6 font-sans bg-white rounded-xl shadow-sm min-h-[85vh] flex flex-col">
@@ -27,8 +27,8 @@ function LogAnalyzer() {
  
       <SearchBar search={search} setSearch={setSearch} />
       <Filters
-        level={level}
-        setLevel={setLevel}
+        // level={level}
+        // setLevel={setLevel}
         startDate={startDate}
         setStartDate={setStartDate}
         endDate={endDate}
@@ -43,7 +43,7 @@ function LogAnalyzer() {
       {/* search summary box stays in last position */}
       <div className="mt-6 p-4 bg-gray-50 rounded-lg shadow-inner text-sm leading-6">
         <p><strong>Search:</strong> {search || "None"}</p>
-        <p><strong>Level Filter:</strong> {level || "All Levels"}</p>
+        {/* <p><strong>Level Filter:</strong> {level || "All Levels"}</p> */}
         <p><strong>Start Date:</strong> {startDate || "Not selected"}</p>
         <p><strong>End Date:</strong> {endDate || "Not selected"}</p>
       </div>
