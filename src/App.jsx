@@ -1,6 +1,8 @@
 import "./App.css";
 import { BrowserRouter, Router, Routes, Route, Navigate } from "react-router-dom";
 import Upload from "./component/Upload";
+import Home from "./component/Home";
+import LogAnalyzer from "./component/LogAnalyzer"; 
 import Login from "./component/Login";
 import Register from "./component/Registration";
 import ForgotPassword from "./component/ForgotPassword";
