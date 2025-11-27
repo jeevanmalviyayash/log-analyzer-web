@@ -75,18 +75,19 @@ const Upload = () => {
     setProgress(0);
     setLoading(true);
 
-    try {
-      await uploadLogFile(selectedFile, (event) => {
-        setProgress(Math.round((event.loaded * 100) / event.total));
-      });
-      setSuccess("Upload successful!");
-      setSelectedFile(null);
-    } catch (err) {
-      setError("Upload failed. Please try again.");
-    } finally {
-      if (fileInputRef.current) fileInputRef.current.value = "";
-      setLoading(false);
-    }
+try {
+  const token = localStorage.getItem("token");
+  await uploadLogFile(selectedFile, token, (event) => {
+    setProgress(Math.round((event.loaded * 100) / event.total));
+  });
+  setSuccess("Uploaded successfully!");
+  setSelectedFile(null);
+} catch (err) {
+  setError("Upload failed. Please try again.");
+} finally {
+  if (fileInputRef.current) fileInputRef.current.value = "";
+  setLoading(false);
+}
   };
 
   return (
