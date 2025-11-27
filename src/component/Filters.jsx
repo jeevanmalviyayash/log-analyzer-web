@@ -1,6 +1,5 @@
 const Filters = ({ setLevel, startDate, setStartDate, endDate, setEndDate }) => {
  
-  // Format function NOT required because <input type="date"> already gives yyyy-MM-dd
   const handleDateChange = (setter) => (e) => {
     setter(e.target.value);
   };
