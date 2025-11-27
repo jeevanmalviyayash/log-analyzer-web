@@ -1,5 +1,5 @@
 import "./App.css";
-import { BrowserRouter, Router, Routes, Route } from "react-router-dom";
+import { BrowserRouter, Router, Routes, Route, Navigate } from "react-router-dom";
 import Upload from "./component/Upload";
 import Home from "./component/Home";
 import LogAnalyzer from "./component/LogAnalyzer"; 
@@ -7,12 +7,12 @@ import Login from "./component/Login";
 import Register from "./component/Registration";
 import ForgotPassword from "./component/ForgotPassword";
 import AIFixes from "./component/AiFixes";
+import LogAnalyzer from "./component/LogAnalyzer"; // ✅ Your moved code goes here
 import Dashboard from "./pages/Dashboard";
 import Logs from "./pages/Logs"
 import Navbar from "./component/Navbar";
 import { Layout } from "antd";
-
-
+ 
 const { Content } = Layout;
 function App() {
   return (
@@ -21,8 +21,8 @@ function App() {
         <Navbar />
         <Content style={{ padding: 24 }}>
           <Routes>
-            {/* <Route path="/" element={<Home />} /> */}
-
+             <Route path="/regitration" element={<Navigate to="/register" />} />
+             <Route path="/" element={<Login/>} />
             <Route path="/upload" element={<Upload />} />
             <Route path="/ai-assistant" element={<AIFixes />} />
             <Route path="/log-analyzer" element={<LogAnalyzer />} />
@@ -38,5 +38,6 @@ function App() {
     </BrowserRouter>
   );
 }
-
+ 
 export default App;
+ 
