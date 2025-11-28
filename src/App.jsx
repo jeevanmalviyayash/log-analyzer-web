@@ -9,7 +9,6 @@ import Login from "./component/Login";
 import Register from "./component/Registration";
 import ForgotPassword from "./component/ForgotPassword";
 import AIFixes from "./component/AiFixes";
-import LogAnalyzer from "./component/LogAnalyzer"; // ✅ Your moved code goes here
 import Dashboard from "./pages/Dashboard";
 import Logs from "./pages/Logs"
 import Navbar from "./component/Navbar";
