@@ -3,60 +3,57 @@ import { Table, Tag, Select } from "antd";
 
 const { Option } = Select;
 
-const levelColor = (category) => {
-  // simple mapping: database / security red, validation orange, others blue/green
-  if (category.includes("DATABASE") || category.includes("SECURITY")) return "red";
-  if (category.includes("VALIDATION") || category.includes("CONFIGURATION")) return "orange";
+const levelColor = (errorType) => {
+  if (!errorType || typeof errorType !== 'string') return "gray"; // Defensive check
+  if (errorType.includes("DATABASE") || errorType.includes("SECURITY")) return "red";
+  if (errorType.includes("VALIDATION") || errorType.includes("CONFIGURATION")) return "orange";
   return "blue";
 };
 
 const AntdLogTable = ({ logs, loading, selectedCategory, onCategoryChange }) => {
+  const uniqueCategories = useMemo(() => {
+    return Array.from(new Set(logs.map(l => l.errorType).filter(Boolean)));
+  }, [logs]);
+
   const columns = useMemo(
     () => [
       {
         title: "Timestamp",
-        dataIndex: "timestamp",
-        key: "timestamp",
+        dataIndex: "timeStamp",
+        key: "timeStamp",
         sorter: (a, b) => new Date(a.timestamp) - new Date(b.timestamp),
         defaultSortOrder: "descend"
       },
       {
         title: "Category",
-        dataIndex: "category",
-        key: "category",
-        filters: Array.from(
-          new Set(logs.map(l => l.category))
-        ).map(cat => ({ text: cat, value: cat })),
-        onFilter: (value, record) => record.category === value,
-        render: (category) => (
-          <Tag color={levelColor(category)}>{category}</Tag>
+        dataIndex: "errorType",
+        key: "errorType",
+        filters: uniqueCategories.map(cat => ({ text: cat, value: cat })),
+        onFilter: (value, record) => record.errorType === value,
+        render: (errorType) => (
+          <Tag color={levelColor(errorType)}>{errorType}</Tag>
         )
       },
       {
         title: "Message",
-        dataIndex: "message",
-        key: "message",
+        dataIndex: "errorMessage",
+        key: "errorMessage",
         ellipsis: true
       },
       {
         title: "Source System",
-        dataIndex: "sourceSystem",
-        key: "sourceSystem"
+        dataIndex: "source",
+        key: "source"
       }
     ],
-    [logs]
-  );
-
-  const uniqueCategories = useMemo(
-    () => Array.from(new Set(logs.map(l => l.category))),
-    [logs]
+    [uniqueCategories]
   );
 
   return (
     <>
       <div style={{ marginBottom: "0.75rem" }}>
         <Select
-          value={selectedCategory}
+          value={selectedCategory || undefined} // Avoid null
           onChange={onCategoryChange}
           allowClear
           placeholder="Filter by category"
@@ -71,7 +68,7 @@ const AntdLogTable = ({ logs, loading, selectedCategory, onCategoryChange }) => 
       </div>
 
       <Table
-        rowKey="id"
+        rowKey={record => record.id || record.timestamp} // Ensure unique key prop
         columns={columns}
         dataSource={logs}
         loading={loading}
