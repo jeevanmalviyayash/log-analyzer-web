@@ -10,24 +10,32 @@ const Logs = () => {
   const [selectedCategory, setSelectedCategory] = useState("");
   const [lastDaysOnly, setLastDaysOnly] = useState(false);
   const [loading, setLoading] = useState(true);
-
+  const token = localStorage.getItem("token"); 
   useEffect(() => {
     const load = async () => {
+      if (!token) {
+        console.warn("No token found, skipping API call");
+        setLoading(false);
+        return;
+      }
+      
+      
       setLoading(true);
       try {
-        const data = await fetchAllErrors(lastDaysOnly ? 7 : undefined);
+        const data = await fetchAllErrors(lastDaysOnly ? 7 : undefined, token);
         setLogs(Array.isArray(data) ? data : []);
+      } catch (error) {
       } finally {
         setLoading(false);
       }
     };
     load();
-  }, [lastDaysOnly]);
+  }, [lastDaysOnly, token]); 
 
   const visibleLogs = useMemo(
     () =>
       selectedCategory
-        ? logs.filter(l => l.category === selectedCategory)
+        ? logs.filter(l => l.errorType === selectedCategory)
         : logs,
     [logs, selectedCategory]
   );
