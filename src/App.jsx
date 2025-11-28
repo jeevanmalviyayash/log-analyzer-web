@@ -10,6 +10,7 @@ import AIFixes from "./component/AiFixes";
 import Dashboard from "./pages/Dashboard";
 import Logs from "./pages/Logs"
 import Navbar from "./component/Navbar";
+import LogAnalyzer from "./component/LogAnalyzer";
 import { Layout } from "antd";
 const { Content } = Layout;
 function App() {
