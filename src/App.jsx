@@ -1,5 +1,7 @@
 import "./App.css";
 import { BrowserRouter, Router, Routes, Route, Navigate } from "react-router-dom";
+import React, { useState } from "react";
+
 import Upload from "./component/Upload";
 import Login from "./component/Login";
 import Register from "./component/Registration";
@@ -10,26 +12,47 @@ import Dashboard from "./pages/Dashboard";
 import Logs from "./pages/Logs"
 import Navbar from "./component/Navbar";
 import { Layout } from "antd";
- 
 const { Content } = Layout;
 function App() {
+  const [token, setToken] = useState(localStorage.getItem("token"));
   return (
     <BrowserRouter>
       <Layout style={{ minHeight: "100vh" }}>
-        <Navbar />
+        {token && <Navbar setToken={setToken} />}
         <Content style={{ padding: 24 }}>
           <Routes>
-             <Route path="/regitration" element={<Navigate to="/register" />} />
-             <Route path="/" element={<Login/>} />
-            <Route path="/upload" element={<Upload />} />
-            <Route path="/ai-assistant" element={<AIFixes />} />
-            <Route path="/log-analyzer" element={<LogAnalyzer />} />
-            <Route path="/" element={<Dashboard />} />
-            <Route path="/logs" element={<Logs />} />
-               <Route path="/log-analyzer" element={<LogAnalyzer />} />
-        <Route path="/login" element={<Login/>} />
-        <Route path="/register" element={<Register />} />
-        <Route path="/forgotPassword" element={<ForgotPassword />} />
+
+            <Route path="/login" element={<Login setToken={setToken} />} />
+            <Route path="/register" element={<Register />} />
+            <Route path="/forgotPassword" element={<ForgotPassword />} />
+
+            <Route
+              path="/dashboard"
+              element={token ? <Dashboard /> : <Navigate to="/login" replace />}
+            />
+            <Route
+              path="/upload"
+              element={token ? <Upload /> : <Navigate to="/login" replace />}
+            />
+            <Route
+              path="/logs"
+              element={token ? <Logs /> : <Navigate to="/login" replace />}
+            />
+            <Route
+              path="/ai-assistant"
+              element={token ? <AIFixes /> : <Navigate to="/login" replace />}
+            />
+            <Route
+              path="/log-analyzer"
+              element={token ? <LogAnalyzer /> : <Navigate to="/login" replace />}
+            />
+            {/* Default route */}
+            <Route
+              path="/"
+              element={<Navigate to={token ? "/dashboard" : "/login"} replace />}
+            />
+            {/* Catch-all */}
+            <Route path="*" element={<Navigate to="/" replace />} />
           </Routes>
         </Content>
       </Layout>

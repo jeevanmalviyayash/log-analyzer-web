@@ -1,7 +1,7 @@
 import React, { useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
-
-const Login = () => {
+import "../css/Login.css";
+const Login = ({ setToken }) => {
   const navigate = useNavigate();
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
@@ -26,44 +26,48 @@ const Login = () => {
       if (response.ok) {
         const token = await response.text();
         localStorage.setItem("token", token);
-        navigate("/upload");
+        setToken(token);
+        navigate("/dashboard");
       } else {
-        const msg = await response.text();
+        const msg = await response.text();        
+  if (response.status === 401) {
+        setError("Invalid email or password");
+      } else if (response.status === 400) {
+        setError("Invalid email or password.");
+      } else if (response.status === 500) {
+        setError("Invalid email or password.");
+      } else {
         setError(msg || "Login failed");
       }
-    } catch (err) {
-      setError("Something went wrong. Please try again.");
     }
-  };
-
+  } catch (err) {
+    setError("Something went wrong. Please try again.");
+  }
+};
   return (
-    <div className="flex w-full max-w-4xl bg-white rounded-lg shadow-lg overflow-hidden border border-black">
-        <div className="w-1/2 bg-blue-700 text-white p-8 flex flex-col justify-center">
-          <h2 className="text-2xl font-bold mb-4">WELCOME BACK</h2>
-          <p className="text-sm mb-6">
-            Log in to access your dashboard and log analysis.
-          </p>
-          <p className="text-sm">
+    <div className="login-container">
+      <div className="login-box">
+        <div className="login-left">
+          <h2>Welcome Back</h2>
+          <p>Log in to access your dashboard and log analysis.</p>
+          <p>
             Don't have an account?{" "}
-            <Link to="/register" className="text-yellow-300 hover:underline font-semibold">
+            <Link to="/register" className="register-link">
               Register here
             </Link>
           </p>
         </div>
-        <div className="w-1/2 p-8">
-          <h2 className="text-2xl font-bold text-blue-700 mb-6">LOGIN FORM</h2>
+        <div className="login-right">
+          <h2>Login</h2>
 
-          {error && (
-            <div className="bg-red-100 text-red-700 p-3 rounded mb-4 text-sm">{error}</div>
-          )}
+          {error && <div className="error-message">{error}</div>}
 
-          <form onSubmit={handleLogin} className="space-y-4">
+          <form onSubmit={handleLogin}>
             <input
               type="email"
               placeholder="Your Email"
               value={email}
               onChange={(e) => setEmail(e.target.value)}
-              className="w-full px-4 py-2 border rounded focus:ring-2 focus:ring-blue-500"
               required
             />
 
@@ -72,26 +76,20 @@ const Login = () => {
               placeholder="Password"
               value={password}
               onChange={(e) => setPassword(e.target.value)}
-              className="w-full px-4 py-2 border rounded focus:ring-2 focus:ring-blue-500"
               required
             />
 
-            <button
-              type="submit"
-              className="w-1/2 px-4 py-2 border text-blue-600 px-6 py-2 rounded hover:bg-blue-800"
-            >
-              Login
-            </button>
+            <button type="submit">Login</button>
           </form>
-
-          <p className="mt-4 text-sm text-gray-600">
-            Forgot your password?{" "}
-            <Link to="/forgotPassword" className="text-blue-600 hover:underline">
-              Reset here
-            </Link>
-          </p>
+<p className="forgot-text">
+  Forgot your password?{" "}
+  <Link to={`/forgotPassword?email=${encodeURIComponent(email)}`} className="forgot-link">
+    Reset
+  </Link>
+</p>
         </div>
       </div>
+    </div>
   );
 };
 
