@@ -60,35 +60,29 @@ function Home() {
         <h2 style={styles.logo}>Log Analyzer App</h2>
         <ul style={styles.navLinks}>
           <li
-            style={styles.navItem}
-            onMouseOver={(e) => (e.target.style.color = styles.navItemHover.color)}
-            onMouseOut={(e) => (e.target.style.color = styles.navItem.color)}
+            className="cursor-pointer hover:text-yellow-400"
             onClick={() => navigate("/")}
           >
             Home
           </li>
           <li
-            style={styles.navItem}
-            onMouseOver={(e) => (e.target.style.color = styles.navItemHover.color)}
-            onMouseOut={(e) => (e.target.style.color = styles.navItem.color)}
+            className="cursor-pointer hover:text-yellow-400"
             onClick={() => navigate("/upload")}
           >
             Upload
           </li>
           <li
-            style={styles.navItem}
-            onMouseOver={(e) => (e.target.style.color = styles.navItemHover.color)}
-            onMouseOut={(e) => (e.target.style.color = styles.navItem.color)}
+            className="cursor-pointer hover:text-yellow-400"
             onClick={() => navigate("/log-analyzer")}
           >
             Log Analyzer
           </li>
         </ul>
       </nav>
-
-      <div style={styles.content}>
-        <h1 style={styles.heading}>Welcome to Log Analyzer</h1>
-        
+ 
+      {/* MAIN CONTENT */}
+      <div className="mt-16">
+        <h1 className="text-3xl font-bold text-gray-700">Welcome to Log Analyzer</h1>
       </div>
          <button className="ai-btn" onClick={clickAiFix}>
           AI Assistant
@@ -96,5 +90,6 @@ function Home() {
     </div>
   );
 }
-
+ 
 export default Home;
+ 
