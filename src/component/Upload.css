@@ -13,7 +13,6 @@
   box-shadow: 0 4px 10px rgba(0,0,0,0.15);
   transition: all 0.3s ease;
 }
-
 .ai-btn:hover {
   background: linear-gradient(135deg, #5aa9f0, #a44bff);
   transform: translateY(-2px);

@@ -13,5 +13,4 @@ const Modal = ({ message, onContinue }) => {
     </div>
   );
 };
-
 export default Modal;

@@ -35,6 +35,5 @@ export default function Navbar({ setToken }) {
         </Menu.Item>
       </Menu>
     </Header>
-    
   );
 }
