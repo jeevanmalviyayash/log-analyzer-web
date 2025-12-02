@@ -1,12 +1,21 @@
-
-import React, { useState } from "react";
-import { Link, useNavigate } from "react-router-dom";
+import React, { useState, useEffect } from "react";
+import { Link, useLocation,useNavigate  } from "react-router-dom";
+import "../css/ForgotPassword.css";
 
 const ForgotPassword = () => {
-  const [email, setEmail] = useState("");
+  const location = useLocation();
+  const navigate = useNavigate();
+  const params = new URLSearchParams(location.search);
+  const prefilledEmail = params.get("email") || "";
+  const [email, setEmail] = useState(prefilledEmail);
   const [newPassword, setNewPassword] = useState("");
   const [error, setError] = useState("");
   const [success, setSuccess] = useState("");
+  useEffect(() => {
+    if (prefilledEmail) {
+      setEmail(prefilledEmail);
+    }
+  }, [prefilledEmail]);
 
   const handleForgotPassword = async (e) => {
     e.preventDefault();
@@ -35,9 +44,10 @@ const ForgotPassword = () => {
       });
 
       if (response.ok) {
-        setSuccess("Password reset successfully! You can now login.");
-        setEmail("");
-        setNewPassword("");
+        setSuccess("Password reset successfully! Redirecting to login...");        
+          setTimeout(() => {
+          navigate("/login");
+        }, 1000);
       } else {
         const msg = await response.text();
         setError(msg || "Failed to reset password");
@@ -48,36 +58,31 @@ const ForgotPassword = () => {
   };
 
   return (
-<div className="flex w-full max-w-4xl bg-white rounded-lg shadow-lg overflow-hidden border border-black">        <div className="w-1/2 bg-blue-700 text-white p-8 flex flex-col justify-center">
-          <h2 className="text-2xl font-bold mb-4">RESET YOUR PASSWORD</h2>
-          <p className="text-sm mb-6">
-            Enter your registered email and new password to reset your account credentials.
-          </p>
-          <p className="text-sm">
+    <div className="forgot-container">
+      <div className="forgot-box">
+        <div className="forgot-left">
+          <h2>Reset Your Password</h2>
+          <p>Enter your registered email and new password to reset your account credentials.</p>
+          <p>
             Remembered your password?{" "}
-            <Link to="/login" className="text-yellow-300 hover:underline font-semibold">
+            <Link to="/login" className="login-link">
               Login here
             </Link>
           </p>
         </div>
 
-        <div className="w-1/2 p-8">
-          <h2 className="text-2xl font-bold text-blue-700 mb-6">FORGOT PASSWORD</h2>
+        <div className="forgot-right">
+          <h2>Forgot Password</h2>
 
-          {error && (
-            <div className="bg-red-100 text-red-700 p-3 rounded mb-4 text-sm">{error}</div>
-          )}
-          {success && (
-            <div className="bg-green-100 text-green-700 p-3 rounded mb-4 text-sm">{success}</div>
-          )}
+          {error && <div className="error-message">{error}</div>}
+          {success && <div className="success-message">{success}</div>}
 
-          <form onSubmit={handleForgotPassword} className="space-y-4">
+          <form onSubmit={handleForgotPassword}>
             <input
               type="email"
               placeholder="Your Email"
               value={email}
               onChange={(e) => setEmail(e.target.value)}
-              className="w-full px-4 py-2 border rounded focus:ring-2 focus:ring-blue-500"
               required
             />
 
@@ -86,20 +91,16 @@ const ForgotPassword = () => {
               placeholder="New Password"
               value={newPassword}
               onChange={(e) => setNewPassword(e.target.value)}
-              className="w-full px-4 py-2 border rounded focus:ring-2 focus:ring-blue-500"
               required
             />
 
-            <button
-              type="submit"
-              className="w-1/2 px-4 py-2 border text-blue-600 px-6 py-2 rounded hover:bg-blue-800"
-            >
-              Reset Password
-            </button>
+            <button type="submit">Reset Password</button>
           </form>
         </div>
       </div>
+    </div>
   );
 };
 
 export default ForgotPassword;
+
