@@ -24,9 +24,9 @@ const Login = ({ setToken }) => {
       });
 
       if (response.ok) {
-        const token = await response.text();
-        localStorage.setItem("token", token);
-        setToken(token);
+        const data = await response.json();
+        localStorage.setItem("token", data.data);
+        setToken(data.data);
         navigate("/dashboard");
       } else {
         const msg = await response.text();        
