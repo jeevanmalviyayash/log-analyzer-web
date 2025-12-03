@@ -21,7 +21,7 @@ export default function Navbar({ setToken }) {
         <Menu.Item key="dashboard"><Link to="/">Dashboard</Link></Menu.Item>
         <Menu.Item key="logs"><Link to="/logs">logs</Link></Menu.Item>
         <Menu.Item key="upload"><Link to="/upload">Upload</Link></Menu.Item>
-        <Menu.Item key="logAnalyzer"><Link to="/log-analyzer">Log Analyzer</Link></Menu.Item>
+        {/* <Menu.Item key="logAnalyzer"><Link to="/log-analyzer">Log Analyzer</Link></Menu.Item> */}
         <Menu.Item key="logout" onClick={handleLogout}>Logout</Menu.Item>
       </Menu>
 

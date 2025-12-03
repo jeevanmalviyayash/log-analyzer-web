@@ -1,52 +1,53 @@
-import React, { useEffect, useState, useMemo } from "react";
+import React, { useEffect, useState } from "react";
 import { Typography, Switch } from "antd";
 import { fetchAllErrors } from "../api/errorApi";
 import AntdLogTable from "../component/AntdLogTable";
-
+ 
 const { Title } = Typography;
-
+ 
 const Logs = () => {
   const [logs, setLogs] = useState([]);
-  const [selectedCategory, setSelectedCategory] = useState("");
   const [lastDaysOnly, setLastDaysOnly] = useState(false);
   const [loading, setLoading] = useState(true);
-  const token = localStorage.getItem("token"); 
+ 
+  const token = localStorage.getItem("token");
+ 
   useEffect(() => {
     const load = async () => {
       if (!token) {
-        console.warn("No token found, skipping API call");
         setLoading(false);
         return;
       }
-      
-      
       setLoading(true);
       try {
         const data = await fetchAllErrors(lastDaysOnly ? 7 : undefined, token);
         setLogs(Array.isArray(data) ? data : []);
-      } catch (error) {
       } finally {
         setLoading(false);
       }
     };
     load();
-  }, [lastDaysOnly, token]); 
-
-  const visibleLogs = useMemo(
-    () =>
-      selectedCategory
-        ? logs.filter(l => l.errorType === selectedCategory)
-        : logs,
-    [logs, selectedCategory]
-  );
-
+  }, [lastDaysOnly, token]);
+ 
+  const visibleLogs = logs;
+ 
   return (
-    <div style={{ maxWidth: "1200px", margin: "0 auto" }}>
-      <Title level={2}>Error Logs</Title>
-
-      <div style={{ display: "flex", justifyContent: "space-between", marginBottom: "1rem" }}>
-        <span>Filter by category using dropdown below.</span>
-        <span>
+    <div style={{ maxWidth: "1300px", margin: "0 auto", paddingTop: "1rem" }}>
+ 
+     
+      <div
+        style={{
+          display: "flex",
+          justifyContent: "space-between",
+          alignItems: "center",
+          marginBottom: "1rem",
+        }}
+      >
+        <Title level={2} style={{ margin: 0 }}>
+          Error Logs
+        </Title>
+ 
+        <span style={{ fontSize: 14 }}>
           Last 7 days only:{" "}
           <Switch
             checked={lastDaysOnly}
@@ -55,15 +56,12 @@ const Logs = () => {
           />
         </span>
       </div>
-
-      <AntdLogTable
-        logs={visibleLogs}
-        loading={loading}
-        selectedCategory={selectedCategory}
-        onCategoryChange={setSelectedCategory}
-      />
+ 
+      {/* SEARCH & FILTERS & TABLE  */}
+      <AntdLogTable logs={visibleLogs} loading={loading} />
     </div>
   );
 };
-
+ 
 export default Logs;
+ 
