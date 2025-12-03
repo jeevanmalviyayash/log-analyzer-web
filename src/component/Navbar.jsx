@@ -15,6 +15,12 @@ export default function Navbar({ setToken }) {
     <Header className="navbar-header">
       <div className="navbar-title">LogAnalyzer</div>
 
+      <Menu theme="dark" mode="horizontal" selectable={false} style={{ flex: 1 }}>
+        <Menu.Item key="dashboard"><Link to="/">Dashboard</Link></Menu.Item>
+        <Menu.Item key="logs"><Link to="/logs">logs</Link></Menu.Item>
+        <Menu.Item key="upload"><Link to="/upload">Upload</Link></Menu.Item>
+        {/* <Menu.Item key="logAnalyzer"><Link to="/log-analyzer">Log Analyzer</Link></Menu.Item> */}
+        <Menu.Item key="logout" onClick={handleLogout}>Logout</Menu.Item>
       <Menu mode="horizontal" selectable={false} className="navbar-menu">
         <Menu.Item key="dashboard">
           <Link to="/" className="navbar-link">Dashboard</Link>
