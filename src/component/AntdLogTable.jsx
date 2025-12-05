@@ -52,7 +52,7 @@ if (searchText.trim()) {
       render: (v) => (v ? new Date(v).toLocaleString() : "-"),
     },
     {
-      title: "Category",
+      title: "Error Type",
       dataIndex: "errorType",
       sorter: (a, b) =>
         String(a.errorType).localeCompare(String(b.errorType)),
