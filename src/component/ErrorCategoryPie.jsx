@@ -72,7 +72,7 @@ const ErrorCategoryPie = ({ stats }) => {
               name
             ]}
           />
-          <Legend />
+          {/* <Legend /> */}
         </PieChart>
       </ResponsiveContainer>
     </div>

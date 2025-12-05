@@ -11,30 +11,48 @@ const Dashboard = () => {
   const [categoryStats, setCategoryStats] = useState([]);
   const [lastDaysBar, setLastDaysBar] = useState(10);
   const [lastDaysPie, setLastDaysPie] = useState(30);
+  const token = localStorage.getItem("token");
 
   useEffect(() => {
     const load = async () => {
-      const data = await fetchDailyCounts(lastDaysBar);
-      // backend returns date as "2025-11-15" (LocalDate); use as is
-      setDailyCounts(
-        Array.isArray(data)
-          ? data.map(d => ({
-              date: d.date,     // assuming backend serializes LocalDate as string
-              count: d.count
-            }))
-          : []
-      );
+      if (!token) {
+        console.warn("No token found, skipping API call");
+        return;
+      }
+      
+      try {
+        const data = await fetchDailyCounts(lastDaysBar, token);
+        setDailyCounts(
+          Array.isArray(data)
+            ? data.map(d => ({
+                date: d.date,
+                count: d.count
+              }))
+            : []
+        );
+      } catch (error) {
+        console.error("Error fetching daily counts:", error);
+      }
     };
     load();
-  }, [lastDaysBar]);
+  }, [lastDaysBar, token]);
 
   useEffect(() => {
     const load = async () => {
-      const data = await fetchCategoryStats(lastDaysPie);
-      setCategoryStats(Array.isArray(data) ? data : []);
+      if (!token) {
+        console.warn("No token found, skipping API call");
+        return;
+      }
+      
+      try {
+        const data = await fetchCategoryStats(lastDaysPie, token);
+        setCategoryStats(Array.isArray(data) ? data : []);
+      } catch (error) {
+        console.error("Error fetching category stats:", error);
+      }
     };
     load();
-  }, [lastDaysPie]);
+  }, [lastDaysPie, token]);
 
   return (
     <div style={{ maxWidth: "1200px", margin: "0 auto" }}>

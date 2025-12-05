@@ -3,7 +3,11 @@ import SearchBar from "./SearchBar";
 import Filters from "./Filters";
 import LogTable from "./LogTable";
 import { fetchLogs } from "../api/logApi";
+
 import { useNavigate } from "react-router-dom";
+
+import Navbar from "./Navbar";
+ 
 
 function LogAnalyzer() {
   const [search, setSearch] = useState("");

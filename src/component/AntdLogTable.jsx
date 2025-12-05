@@ -1,86 +1,155 @@
-import React, { useMemo } from "react";
-import { Table, Tag, Select } from "antd";
-
-const { Option } = Select;
-
-const levelColor = (category) => {
-  // simple mapping: database / security red, validation orange, others blue/green
-  if (category.includes("DATABASE") || category.includes("SECURITY")) return "red";
-  if (category.includes("VALIDATION") || category.includes("CONFIGURATION")) return "orange";
-  return "blue";
-};
-
-const AntdLogTable = ({ logs, loading, selectedCategory, onCategoryChange }) => {
-  const columns = useMemo(
-    () => [
-      {
-        title: "Timestamp",
-        dataIndex: "timestamp",
-        key: "timestamp",
-        sorter: (a, b) => new Date(a.timestamp) - new Date(b.timestamp),
-        defaultSortOrder: "descend"
-      },
-      {
-        title: "Category",
-        dataIndex: "category",
-        key: "category",
-        filters: Array.from(
-          new Set(logs.map(l => l.category))
-        ).map(cat => ({ text: cat, value: cat })),
-        onFilter: (value, record) => record.category === value,
-        render: (category) => (
-          <Tag color={levelColor(category)}>{category}</Tag>
-        )
-      },
-      {
-        title: "Message",
-        dataIndex: "message",
-        key: "message",
-        ellipsis: true
-      },
-      {
-        title: "Source System",
-        dataIndex: "sourceSystem",
-        key: "sourceSystem"
-      }
-    ],
-    [logs]
+import React, { useState } from "react";
+import { Table, Tag, Input, DatePicker, Button } from "antd";
+ 
+const { Search } = Input;
+ 
+const AntdLogTable = ({ logs = [], loading }) => {
+  const [searchText, setSearchText] = useState("");
+  const [dateRange, setDateRange] = useState([null, null]);
+ 
+  // NORMALIZE FIELDS
+  const processed = logs.map((log, index) => ({
+    rowKey: `${index}-${log.timeStamp ?? ""}`,
+    timeStamp: log.timeStamp ?? null,
+    createdAt: log.createdAt ?? null,
+    errorType: log.errorType ?? "",
+    errorMessage: log.errorMessage ?? "",
+    source: log.source ?? "",
+  }));
+ 
+  // FILTERING
+let filtered = [...processed];
+ 
+// DATE FILTER
+if (dateRange[0] && dateRange[1]) {
+  const start = dateRange[0].startOf("day").toDate();
+  const end = dateRange[1].endOf("day").toDate();
+ 
+  filtered = filtered.filter((log) => {
+    const ts = log.timeStamp ? new Date(log.timeStamp) : null;
+    return ts && ts >= start && ts <= end;
+  });
+}
+ 
+// SEARCH FILTER
+if (searchText.trim()) {
+  const q = searchText.toLowerCase();
+ 
+  filtered = filtered.filter((log) =>
+    log.errorType.toLowerCase().includes(q) ||
+    log.errorMessage.toLowerCase().includes(q) ||
+    log.source.toLowerCase().includes(q)
   );
-
-  const uniqueCategories = useMemo(
-    () => Array.from(new Set(logs.map(l => l.category))),
-    [logs]
-  );
-
+}
+ 
+ 
+  const columns = [
+    {
+      title: "Timestamp",
+      dataIndex: "timeStamp",
+      sorter: (a, b) =>
+        (Date.parse(a.timeStamp) || 0) - (Date.parse(b.timeStamp) || 0),
+      render: (v) => (v ? new Date(v).toLocaleString() : "-"),
+    },
+    {
+      title: "Error Type",
+      dataIndex: "errorType",
+      sorter: (a, b) =>
+        String(a.errorType).localeCompare(String(b.errorType)),
+      render: (t) => <Tag color="blue">{t}</Tag>,
+    },
+    {
+      title: "CreatedAt",
+      dataIndex: "createdAt",
+      sorter: (a, b) =>
+        (Date.parse(a.createdAt) || 0) -
+        (Date.parse(b.createdAt) || 0),
+      render: (v) => (v ? new Date(v).toLocaleString() : "-"),
+    },
+    {
+      title: "Message",
+      dataIndex: "errorMessage",
+      ellipsis: true,
+    },
+    {
+      title: "Source System",
+      dataIndex: "source",
+    },
+  ];
+ 
+  const hasFilters = searchText || (dateRange[0] && dateRange[1]);
+ 
   return (
     <>
-      <div style={{ marginBottom: "0.75rem" }}>
-        <Select
-          value={selectedCategory}
-          onChange={onCategoryChange}
+      {/* SEARCH & DATE FILTER */}
+      <div
+        style={{
+          display: "flex",
+          gap: "1rem",
+          marginBottom: "2rem",
+          marginTop: "0.5rem",
+        }}
+      >
+        <Search
+          placeholder="Search in Category, Message, or Source System..."
+          value={searchText}
+          onChange={(e) => setSearchText(e.target.value)}
+          onSearch={(v) => setSearchText(v)}
           allowClear
-          placeholder="Filter by category"
-          style={{ width: 260 }}
-        >
-          {uniqueCategories.map(cat => (
-            <Option key={cat} value={cat}>
-              {cat}
-            </Option>
-          ))}
-        </Select>
+          enterButton
+          loading={loading}
+          size="large"
+          style={{ flex: 1 }}
+        />
+ 
+        <DatePicker
+          value={dateRange[0]}
+          onChange={(d) => setDateRange([d, dateRange[1]])}
+          size="large"
+          placeholder="Start Date"
+          style={{ width: 200 }}
+          format="YYYY-MM-DD"
+        />
+ 
+        <DatePicker
+          value={dateRange[1]}
+          onChange={(d) => setDateRange([dateRange[0], d])}
+          size="large"
+          placeholder="End Date"
+          style={{ width: 200 }}
+          format="YYYY-MM-DD"
+        />
+ 
+        {hasFilters && (
+          <Button
+            type="primary"
+            size="large"
+            onClick={() => {
+              setSearchText("");
+              setDateRange([null, null]);
+            }}
+          >
+            Clear
+          </Button>
+        )}
       </div>
-
+ 
+      {/* TABLE */}
       <Table
-        rowKey="id"
+        rowKey="rowKey"
         columns={columns}
-        dataSource={logs}
+        dataSource={filtered}
         loading={loading}
-        pagination={{ pageSize: 10 }}
+        pagination={{
+          pageSize: 10,
+          showSizeChanger: false,
+          showQuickJumper: true,
+        }}
         bordered
-        size="middle"
       />
     </>
   );
 };
-
+ 
 export default AntdLogTable;
+ 

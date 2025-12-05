@@ -1,7 +1,7 @@
 import React, { useRef, useState } from "react";
 import { uploadLogFile } from "../service/uploadService";
 
-const MAX_SIZE = 50 * 1024 * 1024; // 50MB limit, change as required
+const MAX_SIZE = 100 * 1024 * 1024; // 50MB limit, change as required
 
 const Upload = () => {
   const fileInputRef = useRef();
@@ -83,7 +83,7 @@ try {
   setSuccess("Uploaded successfully!");
   setSelectedFile(null);
 } catch (err) {
-  setError("Upload failed. Please try again.");
+  setError(err.response.data);
 } finally {
   if (fileInputRef.current) fileInputRef.current.value = "";
   setLoading(false);
@@ -158,7 +158,8 @@ try {
             </button>
             <input
               type="file"
-              accept=".log,.txt"
+              //accept=".log,.txt"
+             //  accept=".txt,.log,text/plain,application/octet-stream"
               className="hidden"
               ref={fileInputRef}
               onChange={handleFileChange}
