@@ -28,10 +28,14 @@ function AIFixes() {
 
         try {
             const payload = { messages: [{ content: query }] };
+            const token = localStorage.getItem("token");
             const res = await fetch(`${apiUrl}`+"/ai-assitant", {
                 method: "POST",
-                headers: { "Content-Type": "application/json" },
-                body: JSON.stringify(payload),
+                 headers: {
+                 "Content-Type": "application/json",
+                 "Authorization": `Bearer ${token}`   
+                   },
+               body: JSON.stringify(payload),
             });
 
             const data = await res.json();
