@@ -3,6 +3,9 @@ import { BrowserRouter, Router, Routes, Route, Navigate } from "react-router-dom
 import React, { useState } from "react";
 
 import Upload from "./component/Upload";
+
+import Home from "./component/Home";
+
 import Login from "./component/Login";
 import Register from "./component/Registration";
 import ForgotPassword from "./component/ForgotPassword";
@@ -12,6 +15,9 @@ import Logs from "./pages/Logs"
 import Navbar from "./component/Navbar";
 import LogAnalyzer from "./component/LogAnalyzer";
 import { Layout } from "antd";
+import RequestTracker from "./component/RequestTracker";
+import TicketList from "./component/TicketsStat";
+import TicketStats from "./component/TicketsStat";
 const { Content } = Layout;
 function App() {
   const [token, setToken] = useState(localStorage.getItem("token"));
@@ -25,7 +31,20 @@ function App() {
             <Route path="/login" element={<Login setToken={setToken} />} />
             <Route path="/register" element={<Register />} />
             <Route path="/forgotPassword" element={<ForgotPassword />} />
+            <Route
+              path="/tickets-stats"
+              element={token ? <TicketStats/> : <Navigate to="/login" replace />}
+            />
+             <Route
+              path="/update-ticket"
+              element={token ? <RequestTracker/> : <Navigate to="/login" replace />}
+            />
+          
 
+            <Route
+              path="/create-ticket"
+              element={token ? <RequestTracker /> : <Navigate to="/login" replace />}
+            />
             <Route
               path="/dashboard"
               element={token ? <Dashboard /> : <Navigate to="/login" replace />}

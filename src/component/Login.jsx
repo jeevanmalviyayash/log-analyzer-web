@@ -24,9 +24,16 @@ const Login = ({ setToken }) => {
       });
 
       if (response.ok) {
-        const data = await response.json();
-        localStorage.setItem("token", data.data);
-        setToken(data.data);
+
+        
+          const {userMap} = await response.json();
+        localStorage.setItem("token",userMap.token);
+        sessionStorage.setItem("userEmail",userMap.userEmail);
+        sessionStorage.setItem("userId", userMap.userId);
+        sessionStorage.setItem("userRole",userMap.userRole);
+        
+        setToken(userMap.token);
+3
         navigate("/dashboard");
       } else {
         const msg = await response.text();        

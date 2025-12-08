@@ -1,5 +1,7 @@
-import React, { useEffect, useState } from "react";
-import { Typography, Switch } from "antd";
+
+import React, { useEffect, useState, useMemo } from "react";
+import { Typography, Switch, Button } from "antd";
+
 import { fetchAllErrors } from "../api/errorApi";
 import AntdLogTable from "../component/AntdLogTable";
  
@@ -32,6 +34,7 @@ const Logs = () => {
   const visibleLogs = logs;
  
   return (
+
     <div style={{ maxWidth: "1300px", margin: "0 auto", paddingTop: "1rem" }}>
  
      
@@ -48,6 +51,7 @@ const Logs = () => {
         </Title>
  
         <span style={{ fontSize: 14 }}>
+
           Last 7 days only:{" "}
           <Switch
             checked={lastDaysOnly}
