@@ -26,13 +26,13 @@ const Login = ({ setToken }) => {
       if (response.ok) {
 
         
-          const { token, userEmail, userId,userRole } = await response.json();
-        localStorage.setItem("token",token);
-        sessionStorage.setItem("userEmail", userEmail);
-        sessionStorage.setItem("userId", userId);
-        sessionStorage.setItem("userRole", userRole);
+          const {userMap} = await response.json();
+        localStorage.setItem("token",userMap.token);
+        sessionStorage.setItem("userEmail",userMap.userEmail);
+        sessionStorage.setItem("userId", userMap.userId);
+        sessionStorage.setItem("userRole",userMap.userRole);
         
-        setToken(token);
+        setToken(userMap.token);
 3
         navigate("/dashboard");
       } else {

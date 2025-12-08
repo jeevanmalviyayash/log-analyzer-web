@@ -1,5 +1,6 @@
 import React, { useState } from "react";
 import { Table, Tag, Input, DatePicker, Button } from "antd";
+import { useNavigate } from "react-router-dom";
  
 const { Search } = Input;
  
@@ -15,7 +16,24 @@ const AntdLogTable = ({ logs = [], loading }) => {
     errorType: log.errorType ?? "",
     errorMessage: log.errorMessage ?? "",
     source: log.source ?? "",
+    // action: log.action ?? "",
+    // createTicket: log.createTicket ?? "",
   }));
+
+   const navigate = useNavigate();
+  const clickAiFix = () => {
+    navigate("/ai-assistant");
+  };
+  
+
+   const createTicket = (log) => {
+    
+    navigate("/create-ticket", { state: log }); 
+  };
+   const ticketStat = () => {
+    navigate("/tickets-stats");
+  };
+  
  
   // FILTERING
 let filtered = [...processed];
@@ -75,6 +93,30 @@ if (searchText.trim()) {
       title: "Source System",
       dataIndex: "source",
     },
+   {
+  title: "Actions",
+  key: "actions",
+  render: (text, record) => (
+    <Button
+      type="primary"
+      onClick={() => clickAiFix(record)}
+    >
+     AI Assitant
+    </Button>
+  ),
+},
+     {
+  title: "Create Ticket",
+  key: "createTicket",
+  render: (text, record) => (
+    <Button
+      type="primary"
+      onClick={() => createTicket(record)}
+    >
+      Create Ticket
+    </Button>
+  ),
+}
   ];
  
   const hasFilters = searchText || (dateRange[0] && dateRange[1]);
@@ -119,6 +161,13 @@ if (searchText.trim()) {
           style={{ width: 200 }}
           format="YYYY-MM-DD"
         />
+            <Button
+            type="primary"
+    onClick={ticketStat}
+    
+  >
+    Ticket Stats
+  </Button>
  
         {hasFilters && (
           <Button
@@ -131,7 +180,10 @@ if (searchText.trim()) {
           >
             Clear
           </Button>
-        )}
+        )},
+        
+      
+
       </div>
  
       {/* TABLE */}
