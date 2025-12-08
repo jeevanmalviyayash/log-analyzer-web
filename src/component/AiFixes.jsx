@@ -6,8 +6,7 @@ import remarkGfm from "remark-gfm";
 
 function AIFixes() {
     const location = useLocation();
-    const initialContent = location.state?.content || "";
-
+    const initialContent = location.state || "";
     const [query, setQuery] = useState(initialContent);
     const [messages, setMessages] = useState([]);
     const [loading, setLoading] = useState(false);
@@ -15,10 +14,6 @@ function AIFixes() {
     const apiUrl =import.meta.env.VITE_API_HOST_URL;
 
     const handleSearch = async () => {
-
-
-
-
 
         if (!query.trim()) return;
         setLoading(true);
@@ -66,6 +61,9 @@ function AIFixes() {
 
     useEffect(() => {
         chatEndRef.current?.scrollIntoView({ behavior: "smooth" });
+
+console.log("printing normal ",location.state)
+
     }, [messages, loading]);
 
     return (

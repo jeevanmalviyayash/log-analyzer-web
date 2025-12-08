@@ -21,8 +21,9 @@ const AntdLogTable = ({ logs = [], loading }) => {
   }));
 
    const navigate = useNavigate();
-  const clickAiFix = () => {
-    navigate("/ai-assistant");
+  const clickAiFix = (errorMessage) => {
+  
+    navigate("/ai-assistant",{ state: errorMessage });
   };
   
 
@@ -99,7 +100,7 @@ if (searchText.trim()) {
   render: (text, record) => (
     <Button
       type="primary"
-      onClick={() => clickAiFix(record)}
+      onClick={() => clickAiFix(record.errorMessage)}
     >
      AI Assitant
     </Button>
