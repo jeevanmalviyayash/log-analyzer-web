@@ -12,3 +12,11 @@ export const uploadLogFile = (file, token, onUploadProgress) => {
     onUploadProgress,
   });
 };
+export const addManualError = (logDTO, token) => {
+  return axios.post("http://localhost:8080/api/errors/saveManualError", logDTO, {
+    headers: {
+      Authorization: `Bearer ${token}`,
+      "Content-Type": "application/json"
+    }
+  });
+};

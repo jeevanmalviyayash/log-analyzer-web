@@ -1,49 +1,99 @@
 .navbar-header {
   display: flex;
   align-items: center;
-  background-color: #1e40af;
+  justify-content: space-between;        
+  background-color: #1e40af;             
   padding: 0 16px;
+  height: 64px;                          
+  line-height: 64px;                    
+  box-sizing: border-box;
+  overflow: hidden;                      
 }
 
 .navbar-title {
   color: #fff;
-  font-weight: 700;
+  font-weight: 800;
   font-size: 18px;
-  margin-right: 24px;
+  margin-right: 16px;
+  letter-spacing: 0.2px;
+  white-space: nowrap;
 }
 
 .navbar-menu {
-  flex: 1;
+  flex: 1;                               
   background-color: transparent !important;
   border-bottom: none;
-}
-
-.navbar-link {
-  color: #fff;
-  font-weight: bold;
-}
-
-.navbar-link:hover {
-  color: #93c5fd; 
-}
-
-.navbar-logout {
-  margin-left: auto;
-  
-}
-
-.logout-button {
-  background-color: #fff !important;
-  color: #1e40af !important;
-  font-weight: bold;
-  border-radius: 6px;
-  align-content: center;
+  min-width: 0;                          
 }
 
 .navbar-menu .ant-menu-item a {
-  color: white !important;
+  color: #ffffff !important;
+  font-weight: 600;
+  font-size: larger;
 }
 
 .navbar-menu .ant-menu-item a:hover {
   color: #ffd666 !important;
+}
+
+.navbar-actions {
+  display: flex;
+  align-items: center;
+  margin-left: 12px;                     
+}
+
+.logout-button {
+  border-radius: 999px;
+  padding: 0 16px;
+  height: 36px;
+  font-weight: 700;
+  border: 1px solid rgba(255, 255, 255, 0.75);
+  background-image: linear-gradient(180deg, #ffffff, #f3f6ff);
+  color: #1e40af;
+  box-shadow:
+    0 10px 20px rgba(30, 64, 175, 0.18),
+    0 2px 8px rgba(30, 64, 175, 0.12);
+  transition:
+    transform 140ms ease,
+    box-shadow 140ms ease,
+    background 160ms ease,
+    color 160ms ease,
+    border-color 160ms ease;
+}
+
+.logout-button:hover,
+.logout-button:focus {
+  background-image: linear-gradient(180deg, #2563eb, #1e40af); /* indigo gradient */
+  color: #ffffff;
+  border-color: rgba(255, 255, 255, 0.95);
+  transform: translateY(-1px);
+  box-shadow:
+    0 14px 26px rgba(30, 64, 175, 0.30),
+    0 3px 10px rgba(30, 64, 175, 0.18);
+}
+
+.logout-button.is-loading {
+  opacity: 0.9;
+  pointer-events: none;
+  cursor: wait;
+}
+
+.ant-layout-header {
+  background-color: #1e40af !important;
+}
+
+.ant-menu-dark {
+  background-color: #1e40af !important;
+}
+
+@media (max-width: 768px) {
+  .navbar-title {
+    font-size: 16px;
+    margin-right: 12px;
+  }
+  .logout-button {
+    height: 34px;
+    padding: 0 14px;
+    font-weight: 700;
+  }
 }
