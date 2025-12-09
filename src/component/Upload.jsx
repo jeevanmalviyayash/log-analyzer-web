@@ -1,46 +1,135 @@
-import React, { useRef, useState } from "react";
-import { uploadLogFile } from "../service/uploadService";
+import React, { useRef, useState, useMemo } from "react";
+import { uploadLogFile, addManualError } from "../service/uploadService";
+import { Link, useNavigate } from "react-router-dom";
+import Modal from "./Modal";
+import "../css/Upload.css";
 
-const MAX_SIZE = 100 * 1024 * 1024; // 50MB limit, change as required
+const MAX_SIZE_MB = 50;
+const MAX_SIZE = MAX_SIZE_MB * 1024 * 1024;
 
-const Upload = () => {
-  const fileInputRef = useRef();
+const ACCEPTED_EXT = [".log", ".txt"];
+const ACCEPTED_MIME = ["text/plain", "application/octet-stream", ""];
+
+const MESSAGES = {
+  upload: {
+    successTitle: "Success!",
+    successDesc: "The file was uploaded successfully.",
+    needFile: "Please select a file before uploading.",
+    invalidFile: (exts, maxMb) => `Invalid file. Only ${exts.join(", ")} up to ${maxMb}MB`,
+    unauthorized: "You are not authorized. Please login again.",
+    tooLarge: "File too large. Please use a smaller file.",
+    cancelled: "Upload cancelled.",
+    failedTitle: "Error",
+    failedDescDefault: "Sorry, the file has failed to upload.",
+    failed: "Upload failed. Please try again.",
+  },
+  manual: {
+    successTitle: "Success!",
+    successDesc: "The manual error was added successfully.",
+    fixErrors: "Please fix the errors above.",
+    unauthorized: "You are not authorized. Please login again.",
+    failedTitle: "Error",
+    failedDescDefault: "Sorry, failed to add the manual error.",
+    failed: "Failed to add error. Please try again.",
+    fieldRequired: {
+      errorMessage: "Error message is required.",
+      errorLevel: "Error level is required.",
+      source: "Source is required.",
+      errorType: "Error type is required.",
+    },
+  },
+};
+
+const UploadLogsPage = () => {
+  const fileInputRef = useRef(null);
+  const abortRef = useRef(null);
+
+  // Step toggle exactly like your screenshots
+  const [step, setStep] = useState("upload"); // 'upload' | 'manual'
+
+  // Upload state
   const [selectedFile, setSelectedFile] = useState(null);
   const [dragActive, setDragActive] = useState(false);
   const [progress, setProgress] = useState(0);
-  const [error, setError] = useState("");
-  const [success, setSuccess] = useState("");
-  const [loading, setLoading] = useState(false);
+  const [uploadLoading, setUploadLoading] = useState(false);
 
-  // Reset UI states after interaction
-  const resetState = () => {
+  // Manual entry state
+  const [manualError, setManualError] = useState({
+    errorMessage: "",
+    errorLevel: "ERROR",
+    source: "",
+    errorType: "",
+  });
+  const [fieldErrors, setFieldErrors] = useState({});
+  const [manualLoading, setManualLoading] = useState(false);
+
+  // Modals
+  const [uploadModal, setUploadModal] = useState({
+    open: false,
+    variant: "success",
+    title: "",
+    description: "",
+  });
+  const [manualModal, setManualModal] = useState({
+    open: false,
+    variant: "success",
+    title: "",
+    description: "",
+  });
+
+  // Helpers
+  const acceptAttr = useMemo(() => [...ACCEPTED_EXT, "text/plain"].join(","), []);
+
+  const isValidFile = (file) => {
+    if (!file) return false;
+    const name = file.name?.toLowerCase() ?? "";
+    const type = file.type ?? "";
+    const size = file.size ?? 0;
+
+    const validExt = ACCEPTED_EXT.some((ext) => name.endsWith(ext));
+    const validType = ACCEPTED_MIME.includes(type);
+    const validSize = size <= MAX_SIZE;
+    return validExt && validType && validSize;
+  };
+
+  const resetUpload = () => {
     setSelectedFile(null);
     setProgress(0);
-    setError("");
-    setSuccess("");
-  };
-
-  // Validate uploaded file type and size
-  const isValidFile = (file) => {
-    const validTypes = ["text/plain", "application/octet-stream", ""];
-    const validExt = file.name.endsWith(".log") || file.name.endsWith(".txt");
-    return validTypes.includes(file.type) && validExt && file.size <= MAX_SIZE;
-  };
-
-  // Handle file selection via input
-  const handleFileChange = (e) => {
-    resetState();
-    const file = e.target.files[0];
-    if (file) {
-      if (!isValidFile(file)) {
-        setError("Please select a valid .log or .txt file (max 50MB)");
-        return;
-      }
-      setSelectedFile(file);
+    if (fileInputRef.current) fileInputRef.current.value = "";
+    if (abortRef.current) {
+      abortRef.current.abort();
+      abortRef.current = null;
     }
   };
 
-  // Manage drag-state styling
+  const resetManual = () => {
+    setManualError({
+      errorMessage: "",
+      errorLevel: "ERROR",
+      source: "",
+      errorType: "",
+    });
+    setFieldErrors({});
+  };
+
+  // Upload handlers
+  const handleFileChange = (e) => {
+    setProgress(0);
+    const file = e.target.files?.[0];
+    if (!file) return;
+
+    if (!isValidFile(file)) {
+      setUploadModal({
+        open: true,
+        variant: "error",
+        title: MESSAGES.upload.failedTitle,
+        description: MESSAGES.upload.invalidFile(ACCEPTED_EXT, MAX_SIZE_MB),
+      });
+      return;
+    }
+    setSelectedFile(file);
+  };
+
   const handleDrag = (e) => {
     e.preventDefault();
     e.stopPropagation();
@@ -48,161 +137,370 @@ const Upload = () => {
     else setDragActive(false);
   };
 
-  // Handle file drop event
   const handleDrop = (e) => {
     e.preventDefault();
     e.stopPropagation();
-    resetState();
     setDragActive(false);
-    const file = e.dataTransfer.files[0];
-    if (file) {
-      if (!isValidFile(file)) {
-        setError("Please select a valid .log or .txt file (max 50MB)");
-        return;
+    setProgress(0);
+
+    const file = e.dataTransfer.files?.[0];
+    if (!file) return;
+    if (!isValidFile(file)) {
+      setUploadModal({
+        open: true,
+        variant: "error",
+        title: MESSAGES.upload.failedTitle,
+        description: MESSAGES.upload.invalidFile(ACCEPTED_EXT, MAX_SIZE_MB),
+      });
+      return;
+    }
+    setSelectedFile(file);
+  };
+
+  const handleUpload = async () => {
+    if (!selectedFile) {
+      setUploadModal({
+        open: true,
+        variant: "error",
+        title: MESSAGES.upload.failedTitle,
+        description: MESSAGES.upload.needFile,
+      });
+      return;
+    }
+
+    setUploadLoading(true);
+    const abortController = new AbortController();
+    abortRef.current = abortController;
+
+    try {
+      const token = localStorage.getItem("token");
+
+      await uploadLogFile(
+        selectedFile,
+        token,
+        (event) => {
+          if (event?.total) {
+            setProgress(Math.round((event.loaded * 100) / event.total));
+          }
+        },
+        abortController.signal
+      );
+
+      setUploadModal({
+        open: true,
+        variant: "success",
+        title: MESSAGES.upload.successTitle,
+        description: MESSAGES.upload.successDesc,
+      });
+      resetUpload();
+    } catch (err) {
+      const status = err?.response?.status;
+      let desc = MESSAGES.upload.failedDescDefault;
+
+      if (abortController.signal.aborted) {
+        desc = MESSAGES.upload.cancelled;
+      } else if (status === 401 || status === 403) {
+        desc = MESSAGES.upload.unauthorized;
+      } else if (status === 413) {
+        desc = MESSAGES.upload.tooLarge;
+      } else {
+        desc = err?.response?.data ?? err?.message ?? MESSAGES.upload.failed;
       }
-      setSelectedFile(file);
+
+      setUploadModal({
+        open: true,
+        variant: "error",
+        title: MESSAGES.upload.failedTitle,
+        description: desc,
+      });
+    } finally {
+      setUploadLoading(false);
+      abortRef.current = null;
     }
   };
 
-  // Show system file picker
-  const handleBrowseClick = () => fileInputRef.current.click();
+  const cancelUpload = () => {
+    if (abortRef.current) abortRef.current.abort();
+  };
 
-  // Handle actual file upload
-  const handleUpload = async () => {
-    if (!selectedFile) return;
-    setError("");
-    setSuccess("");
-    setProgress(0);
-    setLoading(true);
+  // Manual handlers
+  const validateManual = () => {
+    const errors = {};
+    if (!manualError.errorMessage.trim())
+      errors.errorMessage = MESSAGES.manual.fieldRequired.errorMessage;
+    if (!manualError.errorLevel.trim())
+      errors.errorLevel = MESSAGES.manual.fieldRequired.errorLevel;
+    if (!manualError.source.trim())
+      errors.source = MESSAGES.manual.fieldRequired.source;
+    if (!manualError.errorType.trim())
+      errors.errorType = MESSAGES.manual.fieldRequired.errorType;
+    setFieldErrors(errors);
+    return Object.keys(errors).length === 0;
+  };
 
-try {
-  const token = localStorage.getItem("token");
-  await uploadLogFile(selectedFile, token, (event) => {
-    setProgress(Math.round((event.loaded * 100) / event.total));
-  });
-  setSuccess("Uploaded successfully!");
-  setSelectedFile(null);
-} catch (err) {
-  setError(err.response.data);
-} finally {
-  if (fileInputRef.current) fileInputRef.current.value = "";
-  setLoading(false);
-}
+  const handleAddError = async () => {
+    if (!validateManual()) {
+      setManualModal({
+        open: true,
+        variant: "error",
+        title: MESSAGES.manual.failedTitle,
+        description: MESSAGES.manual.fixErrors,
+      });
+      return;
+    }
+
+    setManualLoading(true);
+    try {
+      const token = localStorage.getItem("token");
+      await addManualError(manualError, token);
+
+      setManualModal({
+        open: true,
+        variant: "success",
+        title: MESSAGES.manual.successTitle,
+        description: MESSAGES.manual.successDesc,
+      });
+      resetManual();
+    } catch (err) {
+      const status = err?.response?.status;
+      const desc =
+        status === 401 || status === 403
+          ? MESSAGES.manual.unauthorized
+          : err?.response?.data ?? err?.message ?? MESSAGES.manual.failed;
+
+      setManualModal({
+        open: true,
+        variant: "error",
+        title: MESSAGES.manual.failedTitle,
+        description: desc || MESSAGES.manual.failedDescDefault,
+      });
+    } finally {
+      setManualLoading(false);
+    }
   };
 
   return (
-    <div className="h-screen bg-gray-50 flex flex-col overflow-hidden">
-      {/* Add pt-24 if your navbar is fixed,
-          or adjust as needed for your navbar height */}
-      <div className="w-full flex flex-col items-center justify-center pt-24">
-        <h1 className="text-2xl sm:text-3xl font-bold text-blue-600 mb-2">
-          Log Analyzer App <span className="text-black font-semibold">– Upload File</span>
-        </h1>
-        <div className="bg-white rounded-2xl shadow-xl p-8 max-w-md w-full flex flex-col items-center mt-8">
-          {/* Loader Spinner */}
-          {loading && (
-            <div className="mb-4">
-              <svg
-                className="animate-spin h-8 w-8 text-blue-600"
-                xmlns="http://www.w3.org/2000/svg"
-                fill="none"
-                viewBox="0 0 24 24"
-              >
-                <circle
-                  className="opacity-25"
-                  cx="12"
-                  cy="12"
-                  r="10"
-                  stroke="currentColor"
-                  strokeWidth="4"
-                ></circle>
-                <path
-                  className="opacity-75"
-                  fill="currentColor"
-                  d="M4 12a8 8 0 018-8v8z"
-                ></path>
-              </svg>
+    <div className="ul-page">
+      <div className="ul-container">
+        <header className="ul-header">
+          <h1 className="ul-title">Log Analyzer</h1>
+          <p className="ul-subtitle">
+            Perform actions sequentially on one page: upload a log file, or add a manual error.
+          </p>
+        </header>
+
+        {step === "upload" && (
+          <section className="ul-card">
+            <div className="ul-card-header-row">
+              <h2 className="ul-card-title">Upload a log file</h2>
             </div>
-          )}
+            <p className="ul-card-note">
+              Supported types: <span className="ul-note-strong">{ACCEPTED_EXT.join(", ")}</span>. Max size: {MAX_SIZE_MB}MB.
+            </p>
 
-          <form
-            className={`flex flex-col items-center border-2 border-dashed rounded-xl w-full py-8 mb-6 transition-colors duration-200 ${
-              dragActive ? "border-blue-600 bg-blue-50" : "border-gray-300 bg-white"
-            } ${loading ? "opacity-50 pointer-events-none" : ""}`}
-            onDragEnter={handleDrag}
-            onDragOver={handleDrag}
-            onDragLeave={handleDrag}
-            onDrop={handleDrop}
-            onClick={loading ? undefined : handleBrowseClick}
-            style={{ cursor: loading ? "default" : "pointer" }}
-          >
-            <div className="mb-3">
-              <svg fill="#2563eb" width="48" height="48" viewBox="0 0 24 24">
-                <path d="M16 16v-6h-3V2H5v8H2l10 10 10-10h-3V8z" />
-              </svg>
-            </div>
-            <span className="text-gray-500 mb-4 text-center text-sm">
-              Drop your log file here or
-            </span>
-            <button
-              type="button"
-              tabIndex={-1}
-              className="text-blue-600 border border-blue-600 px-6 py-2 rounded-lg font-semibold hover:bg-blue-600 hover:text-white focus:outline-none focus:ring-2 focus:ring-blue-500 transition-colors"
-              onClick={e => {
-                e.stopPropagation();
-                if (!loading) handleBrowseClick();
-              }}
-              disabled={loading}
-            >
-              BROWSE
-            </button>
-            <input
-              type="file"
-              //accept=".log,.txt"
-             //  accept=".txt,.log,text/plain,application/octet-stream"
-              className="hidden"
-              ref={fileInputRef}
-              onChange={handleFileChange}
-              tabIndex={-1}
-              disabled={loading}
-            />
-            {selectedFile && (
-              <span className="mt-4 text-xs text-gray-700 font-mono truncate max-w-full">
-                {selectedFile.name}
-              </span>
-            )}
-          </form>
-
-          {/* Error and Success Messages */}
-          {error && <div className="text-red-600 mb-3 text-center">{error}</div>}
-          {success && <div className="text-green-600 mb-3 text-center">{success}</div>}
-
-          {/* Progress Bar */}
-          {progress > 0 && loading && (
-            <div className="w-full bg-gray-200 rounded-full h-2.5 mb-6">
-              <div
-                className="bg-blue-600 h-2.5 rounded-full transition-all duration-300"
-                style={{ width: `${progress}%` }}
-              ></div>
-            </div>
-          )}
-
-          <button
-            className={`w-full py-3 rounded-lg font-semibold border border-gray-300
-              transition-colors ${
-                !selectedFile || loading
-                  ? "bg-gray-100 text-gray-500 cursor-not-allowed"
-                  : "bg-blue-600 text-white hover:bg-blue-700"
+            <div
+              className={`ul-dropzone ${dragActive ? "ul-dropzone-active" : ""} ${
+                uploadLoading ? "ul-disabled" : ""
               }`}
-            onClick={handleUpload}
-            disabled={!selectedFile || loading}
-          >
-            {loading ? "Uploading..." : "Upload & Analyze"}
-          </button>
-        </div>
+              onDragEnter={handleDrag}
+              onDragOver={handleDrag}
+              onDragLeave={handleDrag}
+              onDrop={handleDrop}
+              aria-label="File dropzone"
+            >
+              <div className="ul-dropzone-icon">⬇️</div>
+              <p className="ul-dropzone-text">Drag & drop your log file here</p>
+              <div className="ul-dropzone-actions">
+                <button
+                  type="button"
+                  className="ul-outline-btn"
+                  onClick={() => fileInputRef.current?.click()}
+                  disabled={uploadLoading}
+                >
+                  Browse
+                </button>
+                <input
+                  ref={fileInputRef}
+                  type="file"
+                  accept={acceptAttr}
+                  className="ul-hidden-input"
+                  onChange={handleFileChange}
+                  disabled={uploadLoading}
+                  aria-label="Upload log file"
+                />
+              </div>
+
+              {selectedFile && (
+                <span className="ul-file-label" aria-live="polite">
+                  {selectedFile.name}
+                </span>
+              )}
+            </div>
+
+            {progress > 0 && uploadLoading && (
+              <div className="ul-progress" aria-label="Upload progress">
+                <div className="ul-progress-bar" style={{ width: `${progress}%` }} />
+              </div>
+            )}
+
+            <div className="ul-actions">
+              <button
+                className={`ul-primary-btn ${!selectedFile || uploadLoading ? "ul-btn-disabled" : ""}`}
+                onClick={handleUpload}
+                disabled={!selectedFile || uploadLoading}
+                aria-busy={uploadLoading ? "true" : "false"}
+              >
+                {uploadLoading ? "Uploading..." : "Upload & Analyze"}
+              </button>
+
+              <button
+                type="button"
+                className="ul-secondary-btn"
+                onClick={resetUpload}
+                disabled={uploadLoading}
+              >
+                Reset
+              </button>
+
+            <button
+                type="button"
+                className="ul-link-btn"
+                onClick={() => setStep("manual")}
+                disabled={uploadLoading}
+                title="Add manual error instead"
+              >
+                Add manual error instead
+              </button>
+            </div>
+          </section>
+        )}
+
+        {step === "manual" && (
+          <section className="ul-card">
+            <div className="ul-card-header-row">
+              <h2 className="ul-card-title">Add a manual error</h2>
+              <button
+                type="button"
+                className="ul-secondary-outline-btn"
+                onClick={() => setStep("upload")}
+                disabled={manualLoading}
+                title="Back to upload"
+              >
+                ← Back to upload
+              </button>
+            </div>
+            <p className="ul-card-note">
+              Use this when you want to record an error message that isn’t present in a file.
+            </p>
+
+            <div className="ul-form-grid">
+              <div className="ul-form-field ul-col-2">
+                <label className="ul-label">
+                  Error message <span className="ul-required">*</span>
+                </label>
+                <textarea
+                  rows={3}
+                  className={`ul-input ${fieldErrors.errorMessage ? "ul-input-error" : ""}`}
+                  placeholder="Describe the error or paste a stack trace snippet"
+                  value={manualError.errorMessage}
+                  onChange={(e) => setManualError({ ...manualError, errorMessage: e.target.value })}
+                />
+                {fieldErrors.errorMessage && (
+                  <p className="ul-error-text">{fieldErrors.errorMessage}</p>
+                )}
+              </div>
+
+              <div className="ul-form-field">
+                <label className="ul-label">
+                  Error level <span className="ul-required">*</span>
+                </label>
+                <select
+                  className={`ul-input ${fieldErrors.errorLevel ? "ul-input-error" : ""}`}
+                  value={manualError.errorLevel}
+                  onChange={(e) => setManualError({ ...manualError, errorLevel: e.target.value })}
+                >
+                  <option value="ERROR">ERROR</option>
+                </select>
+                {fieldErrors.errorLevel && (
+                  <p className="ul-error-text">{fieldErrors.errorLevel}</p>
+                )}
+              </div>
+
+              <div className="ul-form-field">
+                <label className="ul-label">
+                  Source <span className="ul-required">*</span>
+                </label>
+                <input
+                  type="text"
+                  className={`ul-input ${fieldErrors.source ? "ul-input-error" : ""}`}
+                  placeholder="e.g., com.example.MyClass"
+                  value={manualError.source}
+                  onChange={(e) => setManualError({ ...manualError, source: e.target.value })}
+                />
+                {fieldErrors.source && <p className="ul-error-text">{fieldErrors.source}</p>}
+              </div>
+
+              <div className="ul-form-field">
+                <label className="ul-label">
+                  Error type <span className="ul-required">*</span>
+                </label>
+                <input
+                  type="text"
+                  className={`ul-input ${fieldErrors.errorType ? "ul-input-error" : ""}`}
+                  placeholder="e.g., NullPointerException, IOException"
+                  value={manualError.errorType}
+                  onChange={(e) => setManualError({ ...manualError, errorType: e.target.value })}
+                />
+                {fieldErrors.errorType && <p className="ul-error-text">{fieldErrors.errorType}</p>}
+              </div>
+            </div>
+
+            <div className="ul-actions">
+              <button
+                className={`ul-success-btn ${manualLoading ? "ul-btn-disabled" : ""}`}
+                onClick={handleAddError}
+                disabled={manualLoading}
+                aria-busy={manualLoading ? "true" : "false"}
+              >
+                {manualLoading ? "Saving Error ..." : "Add Manual Error"}
+              </button>
+
+              <button
+                type="button"
+                className="ul-secondary-btn"
+                onClick={resetManual}
+                disabled={manualLoading}
+              >
+                Reset
+              </button>
+            </div>
+          </section>
+        )}
+
+        <Modal
+          open={uploadModal.open}
+          variant={uploadModal.variant}
+          title={uploadModal.title}
+          description={uploadModal.description}
+          primaryLabel={uploadModal.variant === "success" ? "Done" : "Try again"}
+          onPrimary={() => {
+            setUploadModal((m) => ({ ...m, open: false }));
+          }}
+          onClose={() => setUploadModal((m) => ({ ...m, open: false }))}
+        />
+
+        <Modal
+          open={manualModal.open}
+          variant={manualModal.variant}
+          title={manualModal.title}
+          description={manualModal.description}
+          primaryLabel={manualModal.variant === "success" ? "Done" : "Try again"}
+          onPrimary={() => setManualModal((m) => ({ ...m, open: false }))}
+          onClose={() => setManualModal((m) => ({ ...m, open: false }))}
+        />
       </div>
     </div>
   );
 };
 
-export default Upload;
+export default UploadLogsPage;
