@@ -16,6 +16,8 @@ const AntdLogTable = ({ logs = [], loading }) => {
     errorType: log.errorType ?? "",
     errorMessage: log.errorMessage ?? "",
     source: log.source ?? "",
+    errorId:log.errorId??""
+
     // action: log.action ?? "",
     // createTicket: log.createTicket ?? "",
   }));
