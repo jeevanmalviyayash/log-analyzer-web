@@ -135,7 +135,6 @@ console.log("Starte are ,",prefill)
         status: String(form.status || "").toUpperCase(),
         userId: sessionStorage.getItem("userId"),
         createdBy: sessionStorage.getItem("userEmail"),
-        createdBy: sessionStorage.getItem("userEmail"),
         errorId:prefill.errorId
       };
 
