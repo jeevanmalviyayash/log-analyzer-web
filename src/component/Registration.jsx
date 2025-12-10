@@ -106,8 +106,8 @@ const Register = () => {
       if (response.ok) {
         setIsSuccess(true);
       } else {
-        const msg = await response.text();
-        alert(msg || "Registration failed");
+     const data = await response.json();   // parse JSON
+      alert(data.message || "Registration failed");
       }
     } catch (err) {
       alert("Something went wrong. Please try again.");
