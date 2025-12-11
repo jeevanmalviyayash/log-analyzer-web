@@ -68,7 +68,7 @@ const Login = ({ setToken }) => {
         <div className="login-right">
           <h2>Login</h2>
 
-          {error && <div className="error-message">{error}</div>}
+          {error && <div className="error-message">{error.message}</div>}
 
           <form onSubmit={handleLogin}>
             <input
