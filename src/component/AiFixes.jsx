@@ -1,11 +1,12 @@
 import React, { useState, useEffect, useRef } from "react";
-import { useLocation } from "react-router-dom";
+import { useLocation,useNavigate } from "react-router-dom";
 import "../css/AiFixes.css";
 import ReactMarkdown from "react-markdown";
 import remarkGfm from "remark-gfm";
 
 function AIFixes() {
     const location = useLocation();
+    const navigate = useNavigate();
     const initialContent = location.state || "";
     const [query, setQuery] = useState(initialContent);
     const [messages, setMessages] = useState([]);
@@ -58,6 +59,11 @@ function AIFixes() {
             handleSearch();
         }
     };
+   
+
+  const goBack = () => {
+    navigate(-1); // navigates back one step
+  };
 
     useEffect(() => {
         chatEndRef.current?.scrollIntoView({ behavior: "smooth" });
@@ -68,6 +74,9 @@ console.log("printing normal ",location.state)
 
     return (
         <div className="ai-fixes">
+            <div className="container">
+  <button onClick={goBack} className="primary">Go Back</button>
+</div>
             {(messages.length > 0 || loading) && (
                 <div className="chat-area">
                     {messages.map((m, i) => (
