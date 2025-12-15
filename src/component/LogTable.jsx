@@ -63,9 +63,7 @@ const LogTable = ({ logs }) => {
                 </td>
                 <td className="px-6 py-4 w-48">
                   <div className="flex flex-wrap gap-2 justify-center">
-                    <button   onClick={() => createTicket(log)} className="ai-btn">
-                      Create Ticket
-                    </button>
+                   { log.ticketId ? ( <button className="ai-btn" onClick={() => navigate("/update-ticket", { state: ticket })} > View / Edit </button> ) : ( <button className="ai-btn" onClick={() => createTicket(log)} > Create Ticket </button> ) }
   
                   </div>
                 </td>
