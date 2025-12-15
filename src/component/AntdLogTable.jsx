@@ -16,7 +16,8 @@ const AntdLogTable = ({ logs = [], loading }) => {
     errorType: log.errorType ?? "",
     errorMessage: log.errorMessage ?? "",
     source: log.source ?? "",
-    errorId:log.errorId??""
+    errorId:log.errorId??"",
+    ticketId:log.ticketId??""
 
     // action: log.action ?? "",
     // createTicket: log.createTicket ?? "",
@@ -108,18 +109,25 @@ if (searchText.trim()) {
     </Button>
   ),
 },
-     {
+   {
   title: "Create Ticket",
   key: "createTicket",
-  render: (text, record) => (
-    <Button
-      type="primary"
-      onClick={() => createTicket(record)}
-    >
-      Create Ticket
-    </Button>
-  ),
+  render: (text, record) => {
+     console.log('row ticketId:',record);
+    console.log('row ticketId:', record.ticketId, 'disabled =', record.ticketId != null);
+
+    return (
+      <Button
+        disabled={record.ticketId != ""}
+        type="primary"
+        onClick={() => createTicket(record)}
+      >
+        Create Ticket
+      </Button>
+    );
+  },
 }
+
   ];
  
   const hasFilters = searchText || (dateRange[0] && dateRange[1]);
