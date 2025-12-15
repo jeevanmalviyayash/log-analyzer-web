@@ -32,9 +32,11 @@ const LogTable = ({ logs }) => {
 
         <tbody>
           {Array.isArray(logs) && logs.length > 0 ? (
+            
             logs.map((log, index) => (
               <tr
                 key={log.errorId}
+                
                 className={`border-b transition ${
                   index % 2 === 0 ? "bg-white" : "bg-gray-50"
                 } hover:bg-blue-50`}
@@ -56,14 +58,32 @@ const LogTable = ({ logs }) => {
                 <td className="px-6 py-4 w-48">
                   <div className="flex flex-wrap gap-2 justify-center">
                     <button className="ai-btn" onClick={clickAiFix}>
-                      AI Assistant
+                      AI Assistantgg
                     </button>
   
                   </div>
                 </td>
                 <td className="px-6 py-4 w-48">
                   <div className="flex flex-wrap gap-2 justify-center">
-                   { log.ticketId ? ( <button className="ai-btn" onClick={() => navigate("/update-ticket", { state: ticket })} > View / Edit </button> ) : ( <button className="ai-btn" onClick={() => createTicket(log)} > Create Ticket </button> ) }
+                    {console.log("printing 66666",log)}
+                  {log.ticketId != null ? (
+                    
+  <button
+    className="ai-btn"
+    onClick={() => navigate("/update-ticket", { state: { ticket: log } })}
+  >
+    View / Edit
+  </button>
+) : (
+  <button
+    className="ai-btn"
+    onClick={() => createTicket(log)}
+  >
+    Create Ticket
+  </button>
+)}
+
+
   
                   </div>
                 </td>

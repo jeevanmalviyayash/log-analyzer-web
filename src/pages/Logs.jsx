@@ -27,7 +27,7 @@ const Logs = () => {
       } finally {
         setLoading(false);
       }
-    };
+    }
     load();
   }, [lastDaysOnly, token]);
  
