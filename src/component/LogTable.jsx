@@ -82,9 +82,6 @@ const LogTable = ({ logs }) => {
     Create Ticket
   </button>
 )}
-
-
-  
                   </div>
                 </td>
               </tr>
